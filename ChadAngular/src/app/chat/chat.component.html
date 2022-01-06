@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="inbox_people">
+    <div class="headind_srch">
+      <div class="recent_heading">
+        <h4>Recent</h4>
+      </div>
+      <div class="srch_bar">
+        <div class="stylish-input-group">
+          <input type="text" class="search-bar" placeholder="Search" (input)="onSearchChange($event.target.value)"/>
+          <span class="input-group-addon">
+            <button type="button">
+              <i class="fa fa-search" aria-hidden="true"></i> 
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="inbox_chat">
+      <app-user-view
+        *ngFor="let user of filteredUsers"
+        (click)="userSelected(user)"
+        [user]="user"
+        [active]="!selectedUser ? false : selectedUser.user_id == user.user_id"
+      ></app-user-view>
+    </div>
+  </div>
+  <div class="mesgs">
+    <div class="msg_history">
+      <app-message
+        *ngFor="let message of messagesToUser"
+        [message]="message"
+        [incoming]="message.message_to_user_id == getMyId()"
+      ></app-message>
+    </div>
+    <div class="type_msg">
+      <textarea
+        class="write_msg"
+        rows="1"
+        placeholder="Type a message"
+        oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
+      ></textarea>
+      <button class="msg_send_btn" type="button">
+        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
