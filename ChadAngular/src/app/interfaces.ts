@@ -17,11 +17,10 @@ export interface HttpServiceInterface {
 
   getUsers(): Observable<Object>;
 
-  getMessages(id: number): Observable<Object>;
+  getMessages(id: number): Observable<Message[]>;
 
   sendMessages(mes: Message): Observable<Object>;
 
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User);
 }
-  

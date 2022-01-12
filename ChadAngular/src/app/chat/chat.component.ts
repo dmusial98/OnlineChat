@@ -39,7 +39,7 @@ export class ChatComponent {
       this.filteredUsers = this.users
     } else {
       this.filteredUsers = this.users.filter((user) => {
-        return user.user_name.includes(filter)
+        return user.login.includes(filter)
       })
     }
   }
@@ -61,19 +61,19 @@ export class ChatComponent {
 
   // Funkcja zwracająca nasze ID
   getMyId() {
-    return this.httpService.loginUserData.user_id;
+    return this.httpService.loginUserData.id;
   }
 
   // Funkcja wysyłająca wiadomość
   sendMessage(e) {
 //
     
-    this.httpService.sendMessages(new Message(this.selectedUser.user_id,e)).subscribe(
-      data => {
-        console.log("ChatComponent, onSubmit:", data);
-      },
-      error => {
-      });
+    //this.httpService.sendMessages(new Message(this.selectedUser.user_id,e)).subscribe(
+    //  data => {
+    //    console.log("ChatComponent, onSubmit:", data);
+    //  },
+    //  error => {
+    //  });
   }
 
   // Funkcja przeładowująca listę użytkowników
@@ -101,18 +101,23 @@ export class ChatComponent {
 
   // Funkcja pobierające listę wiadomości z danym użytkownikiem
   getMessagesWithSelectedUser() {
-    this.httpService.getMessages(this.selectedUser.user_id).subscribe(
-      data => {
-        if ("data" in data) {
-          console.log("data");
-          if (Array.isArray(data["data"])) {
-            this.messagesToUser = data["data"] as Message[];
-          }
-        }
 
-      },
-      error => {
-      });
+    this.httpService.getMessages(1).subscribe(_mes => this.messagesToUser = _mes);
+
+    console.log(this.messagesToUser);
+
+    //this.httpService.getMessages(this.selectedUser.id).subscribe(
+    //  data => {
+    //    if ("data" in data) {
+    //      console.log("data");
+    //      if (Array.isArray(data["data"])) {
+    //        this.messagesToUser = data["data"] as Message[];
+    //      }
+    //    }
+
+    //  },
+    //  error => {
+    //  });
   }
 
 }

@@ -8,8 +8,11 @@ import { Message } from '../message';
 })
 export class MessageComponent implements OnInit {
   @Input() message: Message = {
-    message_to_user_id: -1,
-    message_text: "text should be here"
+    id: -1,
+    userFromId: -1,
+    userToId: -1,
+    content: "text should be here",
+    sendTime: "1111.11.11 00.00"
   }
 
   @Input() incoming = true;

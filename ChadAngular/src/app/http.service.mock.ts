@@ -3,8 +3,9 @@ import { User } from './user';
 import { Message } from './message';
 import { HttpServiceInterface } from './interfaces';
 import { of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-const THIS_USER = new User(0, "user_name_0", "", true);
+const THIS_USER = new User(1, "user_name_0", "", true);
 
 const URL = "/api"
 
@@ -15,7 +16,7 @@ export class HttpServiceMock implements HttpServiceInterface {
   isLogin: boolean = true;
   loginUserData: User = THIS_USER; 
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   // Funkcja umożliwiająca logowanie
   login(user: User) {
@@ -44,22 +45,30 @@ export class HttpServiceMock implements HttpServiceInterface {
   }
 
   getMessages(id: number){
-      switch(id) {
-          case 1:
-            return of({
-                data: [
-                    new Message(0, "1 to 0, hello"),
-                    new Message(1, "0 to 1, hello"),
-                ]
-            })
-        case 2:
-            return of({
-                data: [
-                    new Message(0, "2 to 0, hello"),
-                    new Message(2, "0 to 2, hello"),
-                ]
-            })
-      }
+
+    return this.http.get<Message[]>(`http://localhost:5000/api/messages/byUser?UserId=${id}`,
+      {
+        headers: new HttpHeaders({
+          "Content-Type": "application/json"
+        })
+      });
+
+    //switch(id) {
+      //    case 1:
+      //      return of({
+      //          data: [
+      //              new Message(0, "1 to 0, hello"),
+      //              new Message(1, "0 to 1, hello"),
+      //          ]
+      //      })
+      //  case 2:
+      //      return of({
+      //          data: [
+      //              new Message(0, "2 to 0, hello"),
+      //              new Message(2, "0 to 2, hello"),
+      //          ]
+      //      })
+      //}
   }
 
   sendMessages(mes: Message){

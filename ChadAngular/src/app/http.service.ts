@@ -1,50 +1,52 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { User } from './user';
-import { Message } from './message';
-import { HttpServiceInterface } from './interfaces';
+////import { Injectable } from '@angular/core';
+////import { HttpClient } from '@angular/common/http';
+////import { User } from './user';
+////import { Message } from './message';
+////import { HttpServiceInterface } from './interfaces';
+////import { Observable } from 'rxjs';
 
-const URL = "/api"
+////const URL = "/api"
 
-@Injectable({
-  providedIn: 'root'
-})  
-export class HttpService implements HttpServiceInterface {
+////@Injectable({
+////  providedIn: 'root'
+////})  
+////export class HttpService implements HttpServiceInterface {
 
-  // dla uproszczenia działania aplikacji - UserService będzie przechowywać dane o zalogowanym uzytkowniku
-  isLogin: boolean = false;
-  loginUserData: User; 
+////  // dla uproszczenia działania aplikacji - UserService będzie przechowywać dane o zalogowanym uzytkowniku
+////  isLogin: boolean = false;
+////  loginUserData: User; 
 
-  constructor(private http: HttpClient) { }
+////  constructor(private http: HttpClient) { }
 
-  // Funkcja umożliwiająca logowanie
-  login(user: User) {
-    return this.http.post(URL + "/login", user);
-  }
+////  // Funkcja umożliwiająca logowanie
+////  login(user: User) {
+////    return this.http.post(URL + "/login", user);
+////  }
 
-  // Funkcja umożliwiająca wylogowanie
-  logout() {
-    return this.http.get(URL + "/logout");
-  }
+////  // Funkcja umożliwiająca wylogowanie
+////  logout() {
+////    return this.http.get(URL + "/logout");
+////  }
 
-  // Funkcja umożliwiająca rejestrację
-  register(user: User) {
-    return this.http.post(URL + "/register", user);
-  }
+////  // Funkcja umożliwiająca rejestrację
+////  register(user: User) {
+////    return this.http.post(URL + "/register", user);
+////  }
 
-  getUsers(){
-    return this.http.get(URL + "/users");
-  }
+////  getUsers(){
+////    return this.http.get(URL + "/users");
+////  }
 
-  getMessages(id: number){
-    return this.http.get(URL + "/messages/" + id);
-  }
+////  getMessages(id: number){
+////    //return this.http.get(URL + "/messages/" + id);
+////    return Observable.
+////  }
 
-  sendMessages(mes: Message){
-    return this.http.post(URL + "/messages/", mes);
-  }
-  // Setter ustawiający wartość w polu loginUserData
-  set user(user: User) {
-    this.loginUserData = user;
-  }  
-}
+////  sendMessages(mes: Message){
+////    return this.http.post(URL + "/messages/", mes);
+////  }
+////  // Setter ustawiający wartość w polu loginUserData
+////  set user(user: User) {
+////    this.loginUserData = user;
+////  }  
+////}
