@@ -78,18 +78,23 @@ export class ChatComponent {
 
   // Funkcja przeładowująca listę użytkowników
   reloadUsers() {
-    this.httpService.getUsers().subscribe(
-      data => {
-        if ("data" in data) {
-          console.log("data");
-          if (Array.isArray(data["data"])) {
-            this.users = data["data"] as User[];
-            this.filteredUsers = this.users
-          }
-        }
-      },
-      error => {
-      });
+
+    this.httpService.getUsers().subscribe(_users => { this.users = _users; this.filteredUsers = _users; });
+
+    console.log(this.users);
+
+    //this.httpService.getUsers().subscribe(
+    //  data => {
+    //    if ("data" in data) {
+    //      console.log("data");
+    //      if (Array.isArray(data["data"])) {
+    //        this.users = data["data"] as User[];
+    //        this.filteredUsers = this.users
+    //      }
+    //    }
+    //  },
+    //  error => {
+    //  });
   }
 
   // funkcja wywoływana gdy zostanie wybrany użytkownik na liście użytkowników

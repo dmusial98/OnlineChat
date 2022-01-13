@@ -35,13 +35,21 @@ export class HttpServiceMock implements HttpServiceInterface {
     })
   }
 
-  getUsers(){
-    return of({
-        data: [
-            new User(1, "user_name_1", "", true),
-            new User(2, "user_name_2", "", true),
-        ]
-    })
+  getUsers() {
+
+    return this.http.get<User[]>("http://localhost:5000/api/users");
+      //{
+      //  headers: new HttpHeaders({
+      //    "Content-Type": "application/json"
+      //  })
+      //});
+
+    //return of({
+    //    data: [
+    //        new User(1, "user_name_1", "", true),
+    //        new User(2, "user_name_2", "", true),
+    //    ]
+    //})
   }
 
   getMessages(id: number){

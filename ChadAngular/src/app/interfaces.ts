@@ -15,7 +15,7 @@ export interface HttpServiceInterface {
   // Funkcja umożliwiająca rejestrację
   register(user: User): Observable<Object>;
 
-  getUsers(): Observable<Object>;
+  getUsers(): Observable<User[]>;
 
   getMessages(id: number): Observable<Message[]>;
 
