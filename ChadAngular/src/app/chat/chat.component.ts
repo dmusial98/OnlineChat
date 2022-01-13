@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../user';
 import { Message } from '../message';
@@ -14,13 +14,16 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class ChatComponent {
   @Input() searchContent = ""
- 
+  @ViewChild('messageScroll') private messageScrollContainer: ElementRef;
+  
   // lista użytkowników
   users: User[] = [];
   filteredUsers: User[] = [];
 
   // lista wiadomości z wybranym uzytkownikiem
   messagesToUser: Message[] = [];
+
+  intervalId = setInterval( () => this.getMessagesWithSelectedUser(), 1000 );
 
   // wybrany uzytkownik
   selectedUser: User = null;
@@ -127,5 +130,12 @@ export class ChatComponent {
       },
       error => {
       });
+    try {
+      this.messageScrollContainer.nativeElement.scrollTop = this.messageScrollContainer.nativeElement.scrollHeight;
+  } catch(err) { }      
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
   }
 }

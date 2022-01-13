@@ -25,7 +25,7 @@
     </div>
   </div>
   <div class="mesgs">
-    <div class="msg_history">
+    <div class="msg_history" #messageScroll>
       <app-message
         *ngFor="let message of messagesToUser"
         [message]="message"
