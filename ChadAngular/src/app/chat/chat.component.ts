@@ -22,8 +22,9 @@ export class ChatComponent {
 
   // lista wiadomości z wybranym uzytkownikiem
   messagesToUser: Message[] = [];
+  messageNumber = 0;
 
-  intervalId = setInterval( () => this.getMessagesWithSelectedUser(), 1000 );
+  intervalId = setInterval( () => this.getMessagesWithSelectedUser(), 100 );
 
   // wybrany uzytkownik
   selectedUser: User = null;
@@ -130,10 +131,15 @@ export class ChatComponent {
       },
       error => {
       });
-    try {
-      this.messageScrollContainer.nativeElement.scrollTop = this.messageScrollContainer.nativeElement.scrollHeight;
-  } catch(err) { }      
-  }
+    var newMessageNumber = this.messagesToUser.length
+    if (this.messageNumber != newMessageNumber) {
+      this.messageNumber = newMessageNumber
+      try {
+        this.messageScrollContainer.nativeElement.scrollTop = this.messageScrollContainer.nativeElement.scrollHeight;
+      } catch(err) { }      
+      }
+    }
+    
 
   ngOnDestroy() {
     clearInterval(this.intervalId);
