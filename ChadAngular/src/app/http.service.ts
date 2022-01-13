@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from './user';
 import { Message } from './message';
 import { HttpServiceInterface } from './interfaces';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 const URL = "/api"
 
@@ -12,14 +13,19 @@ const URL = "/api"
 export class HttpService implements HttpServiceInterface {
 
   // dla uproszczenia działania aplikacji - UserService będzie przechowywać dane o zalogowanym uzytkowniku
-  isLogin: boolean = false;
+  loggedIn: Observable<boolean> = new BehaviorSubject<boolean>(false);
   loginUserData: User; 
 
   constructor(private http: HttpClient) { }
 
+  changedLoginState(state: boolean){}
+
   // Funkcja umożliwiająca logowanie
-  login(user: User) {
-    return this.http.post(URL + "/login", user);
+  login(user_name: string, user_password: string) {
+    return this.http.post(URL + "/login", {
+      user_name,
+      user_password
+    });
   }
 
   // Funkcja umożliwiająca wylogowanie
@@ -28,8 +34,8 @@ export class HttpService implements HttpServiceInterface {
   }
 
   // Funkcja umożliwiająca rejestrację
-  register(user: User) {
-    return this.http.post(URL + "/register", user);
+  register(user_name: string, user_email: string, user_password: string) {
+    return this.http.post(URL + "/register", new User(-1, "", true));
   }
 
   getUsers(){

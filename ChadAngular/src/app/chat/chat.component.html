@@ -32,16 +32,19 @@
         [incoming]="message.message_to_user_id == getMyId()"
       ></app-message>
     </div>
-    <div class="type_msg">
-      <textarea
-        class="write_msg"
-        rows="1"
-        placeholder="Type a message"
-        oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
-      ></textarea>
-      <button class="msg_send_btn" type="button">
-        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-      </button>
-    </div>
+    <form [formGroup]="messageForm" (ngSubmit)="onMessageSubmit()">
+      <div class="type_msg">
+        <textarea
+          class="write_msg"
+          rows="1"
+          placeholder="Type a message"
+          oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
+          formControlName="message_text"        
+          ></textarea>
+        <button class="msg_send_btn" type="button" type="submit">
+          <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+        </button>
+      </div>
+    </form>
   </div>
 </div>

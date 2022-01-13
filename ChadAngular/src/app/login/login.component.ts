@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpServiceInterface } from '../interfaces';
+import { User } from '../user';
 
 @Component({
   selector: 'app-root',
@@ -9,13 +12,45 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   hidden = false;
   unreadMessages = 0;
-  private router: Router;
-
+  checkboxChecked = false;
   btType:ButtonType; 
   buttonEnumType: typeof ButtonType = ButtonType;
   title = 'mdb-angular-free';
 
   successAlert = false;
+
+  registerForm = new FormGroup({
+    user_name: new FormControl(""),
+    user_email: new FormControl(""),
+    user_password: new FormControl(""),
+  });
+
+  form = new FormGroup({
+    user_name: new FormControl(""),
+    user_password: new FormControl(""),
+  });
+
+  constructor(
+    private router: Router,
+    @Inject('HttpServiceInterface') private httpService: HttpServiceInterface,
+  ){}
+
+  onRegisterSubmit(){
+    const formValue = this.registerForm.value
+    this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
+  }
+  
+  onLoginSubmit(){
+    const formValue = this.form.value
+    this.httpService.login(formValue.user_name, formValue.user_password)
+    .subscribe( response => {
+      if (response.loggedin == true) {
+        this.httpService.changedLoginState(response.loggedin);
+        this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
+        this.router.navigateByUrl("/chat")
+      }
+    })
+  }
 
   navigateToChat(){
     this.router.navigate(['/chat']);
@@ -37,9 +72,7 @@ export class LoginComponent {
     tempInput.select();
     document.execCommand("copy");
     document.body.removeChild(tempInput);
-
     this.successAlert = true;
-
     setTimeout(() => {
       this.successAlert = false;
     }, 900);

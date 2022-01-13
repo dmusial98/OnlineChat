@@ -12,7 +12,7 @@
               (mouseout)="setHoveredButton(buttonEnumType.none)"
               (click)="selectedButton = buttonEnumType.home">
               <li class="nav-item waves-light" mdbWavesEffect [ngClass]="{'active' : selectedButton == buttonEnumType.home}">
-                <a class="nav-link" href="#">
+                <a class="nav-link" (click)="navigateToHomePage()">
                   <mdb-icon fas icon="home"></mdb-icon>
                   <span *ngIf="hoveredButton==buttonEnumType.home">Home</span>
                 </a>
@@ -30,22 +30,19 @@
 
           </ul>
           <ul class="navbar-nav ml-auto nav-flex-icons">
-            <li class="nav-item waves-light" mdbWavesEffect style="align-self: center;"
-            (click)="selectedButton = buttonEnumType.chat" [ngClass]="{'active' : selectedButton == buttonEnumType.chat}">
-              <a class="nav-link" href="#chat">
-                <mat-icon [ngStyle]="{'color':'white'}" matBadge="{{unreadMessages}}" matBadgeColor="warn">mail_outline
-                </mat-icon>
-              </a>
+            <li class="nav-item waves-light" style="align-self: center;" *ngIf="httpService.loggedIn | async">
+              <mat-icon [ngStyle]="{'color':'white'}" matBadge="{{unreadMessages}}" matBadgeColor="warn">mail_outline
+              </mat-icon>
             </li>
 
-            <li class="nav-item avatar dropdown" dropdown>
+            <li class="nav-item avatar dropdown" dropdown *ngIf="httpService.loggedIn | async">
               <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light"
                 mdbWavesEffect>
                 <img class="transform-size" src="/assets/images/photo.jpg"
                   class="rounded-circle z-depth-0 avatar-image"></a>
               <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary">
                 <a class="dropdown-item waves-light" mdbWavesEffect href="#">My account</a>
-                <a class="dropdown-item waves-light" mdbWavesEffect href="#">Log out</a>
+                <a class="dropdown-item waves-light" mdbWavesEffect (click)="logOut()">Log out</a>
               </div>
             </li>
 

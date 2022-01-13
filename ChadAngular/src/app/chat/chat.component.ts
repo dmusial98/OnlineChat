@@ -4,6 +4,8 @@ import { User } from '../user';
 import { Message } from '../message';
 import { MessageWSService } from '../message-ws.service';
 import { HttpServiceInterface } from '../interfaces';
+import { first } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
@@ -23,15 +25,30 @@ export class ChatComponent {
   // wybrany uzytkownik
   selectedUser: User = null;
 
+  messageForm = new FormGroup({
+    message_text: new FormControl(""),
+  })
+
   constructor(
     private router: Router,
     private wsService: MessageWSService,
     @Inject('HttpServiceInterface') private httpService: HttpServiceInterface,
   ) {
     // Sprawdzenie czy uzytkownik nie jest zalogowany, jezeli tak - przejscie do głownego panelu
-    if (!httpService.isLogin) {
-      //this.router.navigate(['/login']);
-    }
+    this.httpService.loggedIn
+    .pipe(first())
+    .subscribe(value => {
+      if (!value) { 
+        this.router.navigate(['/login']);
+      }
+    })
+  }
+
+  onMessageSubmit(){
+    var message = new Message(this.selectedUser.user_id, this.messageForm.value.message_text, new Date().toUTCString());
+    this.httpService.sendMessages(message).subscribe(_ => {
+      this.getMessagesWithSelectedUser();
+    });
   }
 
   filter(filter: string) {
@@ -68,7 +85,7 @@ export class ChatComponent {
   sendMessage(e) {
 //
     
-    this.httpService.sendMessages(new Message(this.selectedUser.user_id,e)).subscribe(
+    this.httpService.sendMessages(new Message(this.selectedUser.user_id,e, new Date().toString())).subscribe(
       data => {
         console.log("ChatComponent, onSubmit:", data);
       },
@@ -95,7 +112,6 @@ export class ChatComponent {
   // funkcja wywoływana gdy zostanie wybrany użytkownik na liście użytkowników
   userSelected(user: User) {
     this.selectedUser = user;
-    console.log("Selected user", this.selectedUser)
     this.getMessagesWithSelectedUser();
   }
 
@@ -104,15 +120,12 @@ export class ChatComponent {
     this.httpService.getMessages(this.selectedUser.user_id).subscribe(
       data => {
         if ("data" in data) {
-          console.log("data");
           if (Array.isArray(data["data"])) {
             this.messagesToUser = data["data"] as Message[];
           }
         }
-
       },
       error => {
       });
   }
-
 }

@@ -7,16 +7,21 @@ import { Message } from '../message';
   styleUrls: ['./message.component.scss']
 })
 export class MessageComponent implements OnInit {
-  @Input() message: Message = {
-    message_to_user_id: -1,
-    message_text: "text should be here"
-  }
+  @Input() message = new Message(
+    -1,
+    "text should be here", 
+    new Date().toString()
+  )
 
   @Input() incoming = true;
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  getDate(): string {
+    return Message.getDate(this.message.createdAt);
   }
 
 }

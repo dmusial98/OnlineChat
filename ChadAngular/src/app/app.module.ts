@@ -28,6 +28,7 @@ import { HttpService } from './http.service';
 import { HttpServiceMock } from './http.service.mock';
 import { MessageComponent } from './message/message.component';
 import { UserViewComponent } from './user-view/user-view.component';
+import { HttpServiceNode } from './http.service.node';
 
 
 @NgModule({
@@ -64,7 +65,7 @@ import { UserViewComponent } from './user-view/user-view.component';
   providers: [
     {
       provide: 'HttpServiceInterface',
-      useExisting: HttpServiceMock
+      useExisting: HttpServiceNode
     }
   ],
   bootstrap: [AppComponent]

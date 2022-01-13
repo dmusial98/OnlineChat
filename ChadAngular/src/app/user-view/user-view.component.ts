@@ -11,7 +11,6 @@ export class UserViewComponent implements OnInit {
   @Input() user = new User(
     -1,
     "name",
-    "",
     false
   );
 
