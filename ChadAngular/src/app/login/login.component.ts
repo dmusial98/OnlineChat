@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpServiceInterface } from '../interfaces';
 import { User } from '../user';
+import { FormGroup, FormBuilder, Validators, FormControl, NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -16,18 +16,36 @@ export class LoginComponent {
   btType:ButtonType; 
   buttonEnumType: typeof ButtonType = ButtonType;
   title = 'mdb-angular-free';
-
+  registerFormSubmitted = false;
+  loginFormSubmitted = false;
   successAlert = false;
 
-  registerForm = new FormGroup({
-    user_name: new FormControl(""),
-    user_email: new FormControl(""),
-    user_password: new FormControl(""),
+  registerForm = new FormBuilder().group({
+    user_name: new FormControl("", [
+      Validators.required, 
+      Validators.minLength(3),
+      Validators.pattern("^[a-zA-Z]+$")
+    ]),
+    user_email: new FormControl("", [
+      Validators.required, 
+      Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
+    ]),
+    user_password: new FormControl("",[
+      Validators.required, 
+      Validators.minLength(3),
+    ]),
   });
 
-  form = new FormGroup({
-    user_name: new FormControl(""),
-    user_password: new FormControl(""),
+  loginForm = new FormBuilder().group({
+    user_name: new FormControl("", [
+      Validators.required, 
+      Validators.minLength(3),
+      Validators.pattern("^[a-zA-Z]+$")
+    ]),
+    user_password: new FormControl("",[
+      Validators.required, 
+      Validators.minLength(3),
+    ]),
   });
 
   constructor(
@@ -36,20 +54,26 @@ export class LoginComponent {
   ){}
 
   onRegisterSubmit(){
-    const formValue = this.registerForm.value
-    this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
+    this.registerFormSubmitted = true;
+    if(this.registerForm.valid) {
+      const formValue = this.registerForm.value
+      this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
+    }
   }
   
   onLoginSubmit(){
-    const formValue = this.form.value
-    this.httpService.login(formValue.user_name, formValue.user_password)
-    .subscribe( response => {
-      if (response.loggedin == true) {
-        this.httpService.changedLoginState(response.loggedin);
-        this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
-        this.router.navigateByUrl("/chat")
-      }
-    })
+    this.loginFormSubmitted = true;
+    if(this.registerForm.valid) {
+      const formValue = this.loginForm.value
+      this.httpService.login(formValue.user_name, formValue.user_password)
+      .subscribe( response => {
+        if (response.loggedin == true) {
+          this.httpService.changedLoginState(response.loggedin);
+          this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
+          this.router.navigateByUrl("/chat")
+        }
+      })
+    }
   }
 
   navigateToChat(){
@@ -77,7 +101,85 @@ export class LoginComponent {
       this.successAlert = false;
     }, 900);
   }
+
+  placeholderForRegisterUsername() {
+    var placeholder = "Your name";
+    if (this.registerFormSubmitted) {
+      if(this.registerForm.controls['user_name'].hasError('required')){
+        placeholder = "Username is required";
+      } else if (this.registerForm.controls['user_name'].hasError('minlength')) {
+        placeholder = "Username is to short (min 3 characters)";
+      } else if (this.registerForm.controls['user_name'].hasError('pattern')) {
+        placeholder = "Username should only consist of letters";
+      }
+    }
+    return placeholder;
+  }
+  
+  placeholderForRegisterEmail() {
+    var placeholder = "Your email";
+    if (this.registerFormSubmitted) {
+      if(this.registerForm.controls['user_email'].hasError('required')){
+        placeholder = "Email is required";
+      } else if (this.registerForm.controls['user_email'].hasError('pattern')) {
+        placeholder = "Email format is incorrect";
+      }
+    }
+    return placeholder;
+  }
+
+  placeholderForRegisterPassword() {
+    var placeholder = "Your password";
+    if (this.registerFormSubmitted) {
+      if(this.registerForm.controls['user_password'].hasError('required')){
+        placeholder = "Password is required";
+      } else if (this.registerForm.controls['user_password'].hasError('minlength')) {
+        placeholder = "Password is too short (min 3 characters)";
+      }
+    }
+    return placeholder;
+  }
+
+  
+  placeholderForLoginUsername() {
+    var placeholder = "Your name";
+    if (this.loginFormSubmitted) {
+      if(this.loginForm.controls['user_name'].hasError('required')){
+        placeholder = "Username is required";
+      } else if (this.loginForm.controls['user_name'].hasError('minlength')) {
+        placeholder = "Username is to short (min 3 characters)";
+      } else if (this.loginForm.controls['user_name'].hasError('pattern')) {
+        placeholder = "Username should only consist of letters";
+      }
+    }
+    return placeholder;
+  }
+
+  placeholderForLoginEmail() {
+    var placeholder = "Your email";
+    if (this.loginFormSubmitted) {
+      if(this.loginForm.controls['user_email'].hasError('required')){
+        placeholder = "Email is required";
+      } else if (this.loginForm.controls['user_email'].hasError('pattern')) {
+        placeholder = "Email format is incorrect";
+      }
+    }
+    return placeholder;
+  }
+
+  placeholderForLoginPassword() {
+    var placeholder = "Your password";
+    if (this.loginFormSubmitted) {
+      if(this.loginForm.controls['user_password'].hasError('required')){
+        placeholder = "Password is required";
+      } else if (this.loginForm.controls['user_password'].hasError('minlength')) {
+        placeholder = "Password is too short (min 3 characters)";
+      }
+    }
+    return placeholder;
+  }
 }
+
 
 enum ButtonType{
   none,

@@ -18,29 +18,26 @@
                       <div class="md-form">
                         <mdb-icon fas icon="user" class="prefix text-white active"></mdb-icon>
                         <input type="text" id="form" class="text-white form-control" mdbInput formControlName="user_name">
-                        <label for="form" class="text-white">Your name</label>
+                        <label for="form" [style]="{'color': registerFormSubmitted && registerForm.controls['user_name'].errors ? 'red' : 'white'}">{{placeholderForRegisterUsername()}}</label>
                       </div>
                     </div>
                     <div class="md-form">
                       <mdb-icon fas icon="envelope" class="prefix text-white active"></mdb-icon>
                       <input type="email" id="form1" class="text-white form-control" mdbInput formControlName="user_email">
-                      <label for="form1" class="text-white">Your email</label>
+                      <label for="form1" [style]="{'color': registerFormSubmitted && registerForm.controls['user_email'].errors ? 'red' : 'white'}">{{placeholderForRegisterEmail()}}</label>
                     </div>
                     <div class="md-form">
                       <mdb-icon fas icon="key" class="prefix text-white active"></mdb-icon>
                       <input type="password" id="form2" class="text-white form-control" mdbInput formControlName="user_password">
-                      <label for="form2" class="text-white">Your password</label>
+                      <label id="form2" [style]="{'color': registerFormSubmitted && registerForm.controls['user_password'].errors ? 'red' : 'white'}">{{placeholderForRegisterPassword()}}</label>
                     </div>
-
-
                     <div class="grey-text form-check d-flex mb-4">
-                      <input class="form-check-input me-2" type="checkbox" id="registerCheck" (change)="checkboxChecked = !checkboxChecked" unchecked/>
+                      <input class="form-check-input me-2" type="checkbox" id="registerCheck" (change)="checkboxChecked = !checkboxChecked" unchecked />
                       <label class="form-check-label" for="registerCheck" [ngStyle]="{'color':checkboxChecked ? '' : '#ff2222'}">
                         I have read and agree to the terms
                       </label>
                     </div>
                   </div>
-
                   <div class="text-center mt-4 credentials-button-div">
                     <button class="element-center" mdbBtn color="info" mdbWavesEffect type="submit" [disabled]="!checkboxChecked">
                       <div class="font-color">
@@ -62,7 +59,7 @@
           <div class=" non-scrollable" role="navigation">
             <mdb-card class="wow fadeInRight" data-wow-delay="0.3s">
               <mdb-card-body class="credentials-panel">
-                <form [formGroup]="form" (ngSubmit)="onLoginSubmit()">
+                <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
                   <div class="text-center">
                     <h1 class="white-text">
                       Sign In
@@ -70,14 +67,14 @@
                   </div>
                   <div class="sign-in-textboxs">
                     <div class="md-form">
-                      <mdb-icon fas icon="envelope" class="prefix text-white active"></mdb-icon>
-                      <input type="email" id="form1" class="text-white form-control" mdbInput formControlName="user_name">
-                      <label for="form1" class="text-white">Your email</label>
+                      <mdb-icon fas icon="user" class="prefix text-white active"></mdb-icon>
+                      <input type="text" id="form1" class="text-white form-control" mdbInput formControlName="user_name">
+                      <label for="form1" [style]="{'color': loginFormSubmitted && loginForm.controls['user_name'].errors ? 'red' : 'white'}">{{placeholderForLoginUsername()}}</label>
                     </div>
                     <div class="md-form">
                       <mdb-icon fas icon="key" class="prefix text-white active"></mdb-icon>
                       <input type="password" id="form2" class="text-white form-control" mdbInput formControlName="user_password">
-                      <label for="form2" class="text-white">Your password</label>
+                      <label for="form2" [style]="{'color': loginFormSubmitted && loginForm.controls['user_password'].errors ? 'red' : 'white'}">{{placeholderForLoginPassword()}}</label>
                     </div>
                   </div>
                   <div class="text-center mt-4 credentials-button-div">
@@ -94,111 +91,5 @@
         </mat-card-content>
       </mat-tab>
     </mat-tab-group>
-    <!-- <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
-      <li class="nav-item" role="presentation">
-        <a
-          class="nav-link active"
-          id="tab-register"
-          data-mdb-toggle="pill"
-          href="#pills-register"
-          role="form"
-          aria-controls="pills-register"
-          aria-selected="true"
-          data-mdb-toggle="tab"
-          >Register</a
-        >
-      </li>
-        <li class="nav-item" role="presentation">
-          <a
-            class="nav-link"
-            id="tab-login"
-            data-mdb-toggle="pill"
-            href="#pills-login"
-            role="form"
-            aria-controls="pills-login"
-            aria-selected="false"
-            data-mdb-toggle="tab"
-            >Login</a
-          >
-        </li>
-    </ul> -->
-
-
-    <!-- <form 
-      class="tab-pane fade white-tex active" 
-      id="pills-login"
-      role="tabpanel" 
-      aria-labelledby="tab-login"
-    >
-      Tab 2 content
-    </form>
-    <form
-      class=" white-text tab-pane fade show"
-      id="pills-register" 
-      role="form"
-      aria-labelledby="tab-register"
-    >
-      olaaa
-    </form> -->
-
-    <!-- <div class="row w-100 register-panel">
-        <div class="col-md-6 col-xl-5 ">
-        
-          <mdb-card class="wow fadeInRight" data-wow-delay="0.3s">
-            <mdb-card-body>
-        
-              <div class="text-center">
-                <h1 class="white-text">
-                  <mdb-icon fas icon="file-signature" class="text-white"></mdb-icon> Sign up:
-                </h1>
-                <p class="grey-text">Please fill in this form to create an account!</p>
-              </div>
-           
-              <div>   
-                <div class="md-form">                 
-                  <mdb-icon fas icon="user" class="prefix text-white active"></mdb-icon>
-                  <input type="text" id="form" class="text-white form-control" mdbInput>
-                  <label for="form" class="text-white">Your name</label>
-                </div>
-              </div>
-              <div class="md-form">
-                <mdb-icon fas icon="envelope" class="prefix text-white active"></mdb-icon>
-                <input type="email" id="form1" class="text-white form-control" mdbInput>
-                <label for="form1" class="text-white">Your email</label>
-              </div>
-              <div class="md-form">
-                <mdb-icon fas icon="key" class="prefix text-white active"></mdb-icon>
-                <input type="password" id="form2" class="text-white form-control" mdbInput>
-                <label for="form2" class="text-white">Your password</label>
-         
-      
-              </div>
-
-           
-              <div class="grey-text form-check d-flex mb-4">
-                <input
-                  class="form-check-input me-2"
-                  type="checkbox"
-                  id="registerCheck"
-                  unchecked
-                />
-                <label class="form-check-label" for="registerCheck">
-                  I have read and agree to the terms
-                </label>
-              </div>
-
-              <div class="text-center mt-4">
-                <button mdbBtn color="info" mdbWavesEffect>
-                  <div class="font-color">
-                    Sign up
-                  </div>
-                </button>
-  
-              </div>
-            </mdb-card-body>
-          </mdb-card>
-         
-        </div>
-      </div> -->
   </div>
 </div>
