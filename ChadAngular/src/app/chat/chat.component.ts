@@ -15,7 +15,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 export class ChatComponent {
   @Input() searchContent = ""
   @ViewChild('messageScroll') private messageScrollContainer: ElementRef;
-  
+
   // lista użytkowników
   users: User[] = [];
   filteredUsers: User[] = [];
@@ -24,7 +24,7 @@ export class ChatComponent {
   messagesToUser: Message[] = [];
   messageNumber = 0;
 
-  intervalId = setInterval( () => this.getMessagesWithSelectedUser(), 100 );
+  intervalId = setInterval(() => this.getMessagesWithSelectedUser(), 100);
 
   // wybrany uzytkownik
   selectedUser: User = null;
@@ -40,16 +40,16 @@ export class ChatComponent {
   ) {
     // Sprawdzenie czy uzytkownik nie jest zalogowany, jezeli tak - przejscie do głownego panelu
     this.httpService.loggedIn
-    .pipe(first())
-    .subscribe(value => {
-      if (!value) { 
-        this.router.navigate(['/login']);
-      }
-    })
+      .pipe(first())
+      .subscribe(value => {
+        if (!value) {
+          this.router.navigate(['/login']);
+        }
+      })
   }
 
-  onMessageSubmit(){
-    var message = new Message(this.selectedUser.user_id, this.messageForm.value.message_text, new Date().toUTCString());
+  onMessageSubmit() {
+    var message = new Message(this.selectedUser.id, this.messageForm.value.content, new Date().toUTCString());
     this.httpService.sendMessages(message).subscribe(_ => {
       this.getMessagesWithSelectedUser();
     });
@@ -60,7 +60,7 @@ export class ChatComponent {
       this.filteredUsers = this.users
     } else {
       this.filteredUsers = this.users.filter((user) => {
-        return user.user_name.includes(filter)
+        return user.login.includes(filter)
       })
     }
   }
@@ -74,22 +74,23 @@ export class ChatComponent {
     this.wsService.onAnotherUserConneted.subscribe((event => {
       this.reloadUsers();
     }));
-    this.wsService.onMessage.subscribe((event =>{
-      this.getMessagesWithSelectedUser();
+    this.wsService.onMessage.subscribe((event => {
+      if (this.selectedUser !== undefined && this.selectedUser !== null)
+        this.getMessagesWithSelectedUser();
     }));
   }
 
 
   // Funkcja zwracająca nasze ID
   getMyId() {
-    return this.httpService.loginUserData.user_id;
+    return this.httpService.loginUserData.id;
   }
 
   // Funkcja wysyłająca wiadomość
   sendMessage(e) {
-//
-    
-    this.httpService.sendMessages(new Message(this.selectedUser.user_id,e, new Date().toString())).subscribe(
+    //
+
+    this.httpService.sendMessages(new Message(this.selectedUser.id, e, new Date().toString())).subscribe(
       data => {
         console.log("ChatComponent, onSubmit:", data);
       },
@@ -101,16 +102,24 @@ export class ChatComponent {
   reloadUsers() {
     this.httpService.getUsers().subscribe(
       data => {
-        if ("data" in data) {
-          console.log("data");
-          if (Array.isArray(data["data"])) {
-            this.users = data["data"] as User[];
-            this.filteredUsers = this.users
-          }
-        }
-      },
+        this.users = data; this.filteredUsers = data;
+        console.log(this.users, this.filteredUsers);
+      }
+
+      //{
+      //  if ("data" in data) {
+      //    console.log("data");
+      //    if (Array.isArray(data["data"])) {
+      //      this.users = data["data"] as User[];
+      //      this.filteredUsers = this.users
+      //    }
+      //  }
+      //}
+      ,
       error => {
       });
+
+    console.log(this.users, this.selectedUser);
   }
 
   // funkcja wywoływana gdy zostanie wybrany użytkownik na liście użytkowników
@@ -121,25 +130,25 @@ export class ChatComponent {
 
   // Funkcja pobierające listę wiadomości z danym użytkownikiem
   getMessagesWithSelectedUser() {
-    this.httpService.getMessages(this.selectedUser.user_id).subscribe(
-      data => {
-        if ("data" in data) {
-          if (Array.isArray(data["data"])) {
-            this.messagesToUser = data["data"] as Message[];
-          }
-        }
-      },
-      error => {
-      });
-    var newMessageNumber = this.messagesToUser.length
-    if (this.messageNumber != newMessageNumber) {
-      this.messageNumber = newMessageNumber
-      try {
-        this.messageScrollContainer.nativeElement.scrollTop = this.messageScrollContainer.nativeElement.scrollHeight;
-      } catch(err) { }      
+    
+    if (this.selectedUser) {
+      console.log('getMessageWithSelectedUser')
+      this.httpService.getMessages(this.selectedUser.id).subscribe(
+        data => {
+          this.messagesToUser = data;
+        },
+        error => {
+        });
+      var newMessageNumber = this.messagesToUser.length
+      if (this.messageNumber != newMessageNumber) {
+        this.messageNumber = newMessageNumber
+        try {
+          this.messageScrollContainer.nativeElement.scrollTop = this.messageScrollContainer.nativeElement.scrollHeight;
+        } catch (err) { }
       }
     }
-    
+  }
+
 
   ngOnDestroy() {
     clearInterval(this.intervalId);

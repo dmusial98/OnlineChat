@@ -24,12 +24,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { HttpService } from './http.service';
-import { HttpServiceMock } from './http.service.mock';
+//import { HttpService } from './http.service';
+//import { HttpServiceMock } from './http.service.mock';
 import { MessageComponent } from './message/message.component';
 import { UserViewComponent } from './user-view/user-view.component';
-import { HttpServiceNode } from './http.service.node';
-
+//import { HttpServiceNode } from './http.service.node';
+import { HttpServiceASPNET } from './http.service.aspnet';
 
 @NgModule({
   declarations: [
@@ -65,7 +65,7 @@ import { HttpServiceNode } from './http.service.node';
   providers: [
     {
       provide: 'HttpServiceInterface',
-      useExisting: HttpServiceNode
+      useExisting: HttpServiceASPNET
     }
   ],
   bootstrap: [AppComponent]

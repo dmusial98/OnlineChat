@@ -16,13 +16,12 @@ export interface HttpServiceInterface {
   // Funkcja umożliwiająca rejestrację
   register(user_name: string, user_email: string, user_password: string): Observable<any>;
 
-  getUsers(): Observable<Object>;
+  getUsers(): Observable<User[]>;
 
-  getMessages(id: number): Observable<Object>;
+  getMessages(id: number): Observable<Message[]>;
 
   sendMessages(mes: Message): Observable<Object>;
 
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User);
 }
-  

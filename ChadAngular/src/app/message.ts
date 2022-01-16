@@ -2,13 +2,21 @@ import { formatDate } from "@angular/common";
 
 export class Message {
 
+  id: number;
+  userFromId: number;
+  userToId: number;
+  content: string;
+  sendTime: string;
+  updateTime: string;
+
+
     constructor(
-        //public message_id: number, 
-        //public message_from_user_id: number,
-        public message_to_user_id: number, 
-        public message_text: string, 
-        public createdAt: string 
-        //public updatedAt:string
+        id: number, 
+        //userFromId: number,
+        //userToId: number, 
+        content: string, 
+        sendTime: string, 
+        //updateTime: string
         ) {
     }
 

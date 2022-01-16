@@ -10,7 +10,7 @@ export class MessageComponent implements OnInit {
   @Input() message = new Message(
     -1,
     "text should be here", 
-    new Date().toString()
+    new Date().toString(),
   )
 
   @Input() incoming = true;
@@ -21,7 +21,7 @@ export class MessageComponent implements OnInit {
   }
 
   getDate(): string {
-    return Message.getDate(this.message.createdAt);
+    return Message.getDate(this.message.sendTime);
   }
 
 }

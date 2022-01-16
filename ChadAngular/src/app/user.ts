@@ -1,13 +1,19 @@
+import {Message} from './message'
+
 export class User {
-    user_id: number;
-    user_name:string;
-    user_password: string;
-    online: boolean;
+  id: number;
+  role: string;
+  login: string;
+  password: string;
+  email: string;
+  online: boolean;
+  messagesFrom: Message[];
+  messagesTo: Message[];
 
 
-    constructor(user_id: number, user_name: string, online:boolean = false) {
-       this.user_id = user_id;
-       this.user_name = user_name;
-       this.online = online;
-    }
+  constructor(id: number, login: string, online: boolean = false) {
+    this.id = id;
+    this.login = login;
+    this.online = online;
+  }
 }
