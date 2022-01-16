@@ -80,9 +80,9 @@ namespace OnlineChat.Data
             return await query.FirstAsync();
         }
 
-        public async Task<Message[]> GetMessagesByUserAsync(int userId)
+        public async Task<Message[]> GetMessagesByUserAsync(int userId1, int userId2)
         {
-            var query = _context.Messages.Where(m => m.UserFromId == userId || m.UserToId == userId);
+            var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserToId == userId1 && m.UserFromId == userId2));
 
             return await query.ToArrayAsync();
         }

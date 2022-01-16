@@ -49,6 +49,8 @@ export class AppComponent {
     this.loggedIn = false;
     this.httpService.changedLoginState(false);
     this.httpService.loginUserData = null;
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("refreshToken");
     this.router.navigate(['/login']);
   }
 

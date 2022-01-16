@@ -22,10 +22,14 @@ export class HttpServiceASPNET implements HttpServiceInterface {
 
   // Funkcja umożliwiająca logowanie
   login(user_name: string, user_password: string) {
-    return this.httpClient.post("/api/login/", {
-      "user_name": user_name,
-      "user_password": user_password
+    let response = this.httpClient.post("http://localhost:5000/api/auth/login", {
+      "login": user_name,
+      "password": user_password
     });
+
+    console.log(response);
+
+    return response;
   }
 
   // Funkcja umożliwiająca wylogowanie

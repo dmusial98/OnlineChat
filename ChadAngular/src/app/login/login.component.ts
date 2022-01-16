@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { HttpServiceInterface } from '../interfaces';
 import { User } from '../user';
 import { FormGroup, FormBuilder, Validators, FormControl, NgForm } from '@angular/forms';
+import { JwtHelperService } from "@auth0/angular-jwt";
+import { AuthGuard } from '../guards/auth-guard.service';
 
 @Component({
   selector: 'app-root',
@@ -51,6 +53,7 @@ export class LoginComponent {
   constructor(
     private router: Router,
     @Inject('HttpServiceInterface') private httpService: HttpServiceInterface,
+    private authGuard: AuthGuard
   ) { }
 
   onRegisterSubmit() {
@@ -63,23 +66,25 @@ export class LoginComponent {
 
   onLoginSubmit() {
 
-    console.log('onLoginSubmit()')
+    this.loginFormSubmitted = true;
 
-    this.httpService.changedLoginState(true);
-    this.httpService.loginUserData = new User(1, "user", true);
+    if (this.loginForm.valid) {
 
-    //this.loginFormSubmitted = true;
-    //if(this.registerForm.valid) {
-    //  const formValue = this.loginForm.value
-    //  this.httpService.login(formValue.user_name, formValue.user_password)
-    //  .subscribe( response => {
-    //    if (response.loggedin == true) {
-    //      this.httpService.changedLoginState(response.loggedin);
-    //      this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
-    this.router.navigateByUrl("/chat")
-    //    }
-    //  })
-    //}
+      const formValue = this.loginForm.value
+      this.httpService.login(formValue.user_name, formValue.user_password)
+        .subscribe(response => {
+          console.log('after sending post', response);
+          const token = (<any>response).accessToken;
+          const refreshToken = (<any>response).refreshToken;
+          localStorage.setItem("jwt", token);
+          localStorage.setItem("refreshToken", refreshToken);
+          this.httpService.changedLoginState(true);
+          this.httpService.loginUserData = new User(this.authGuard.getIdFromJWT(), formValue.user_name, true);
+          this.router.navigateByUrl("/chat")
+        }, err => {
+          this.httpService.changedLoginState(false);
+        })
+    }
   }
 
   navigateToChat() {

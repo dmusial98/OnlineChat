@@ -22,6 +22,6 @@ namespace OnlineChat.Data
         // Messages
         Task<Message[]> GetAllMessagesAsync();
         Task<Message> GetMessageByIdAsync(int id);
-        Task<Message[]> GetMessagesByUserAsync(int categoryId);
+        Task<Message[]> GetMessagesByUserAsync(int userId1, int userId2);
     }
 }

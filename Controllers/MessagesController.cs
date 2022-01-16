@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -8,6 +9,7 @@ using OnlineChat.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace OnlineChat.Controllers
@@ -60,17 +62,28 @@ namespace OnlineChat.Controllers
         }
 
 
-        [HttpGet("byUser")]
+        [HttpGet("byUser"), Authorize]
         public async Task<ActionResult<MessageModel[]>> GetByUser(int userId)
         {
             try
             {
-                var products = await _repository.GetMessagesByUserAsync(userId);
+                string userIdFromString = User.FindFirst(ClaimTypes.Sid)?.Value;
+                int userIdFrom =1;
 
-                if (products == null)
-                    return NotFound();
+                if (!String.IsNullOrEmpty(userIdFromString))
+                {
+                    userIdFrom = int.Parse(userIdFromString);
+                    var messages = await _repository.GetMessagesByUserAsync(userId, userIdFrom);
 
-                return _mapper.Map<MessageModel[]>(products);
+                    if (messages == null)
+                        return NotFound();
+
+                    return _mapper.Map<MessageModel[]>(messages);
+                }
+                else
+                    return this.StatusCode(StatusCodes.Status404NotFound);
+
+                
             }
             catch (Exception e)
             {

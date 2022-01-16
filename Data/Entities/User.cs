@@ -14,7 +14,8 @@ namespace OnlineChat.Data.Entities
         public string Email { get; set; }
         public List<Message> MessagesFrom { get; set; }
         public List<Message> MessagesTo { get; set; }
-
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
 
     }
 }

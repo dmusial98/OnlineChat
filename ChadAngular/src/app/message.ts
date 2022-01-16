@@ -22,6 +22,6 @@ export class Message {
 
     static getDate(createdAt: string ) {
         var date = Date.parse(createdAt)
-        return formatDate(date,'dd-MM-yyyy: hh:mm','en-US');
+        return formatDate(date,'yyyy-MM-dd: hh:mm','en-US');
     }
 }

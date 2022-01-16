@@ -1,12 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-
-
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './register/register.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -16,7 +11,7 @@ import { ChatUserListComponent } from './chat-user-list/chat-user-list.component
 import { ChatMessageListComponent } from './chat-message-list/chat-message-list.component';
 import { ChatNewMessageAreaComponent } from './chat-new-message-area/chat-new-message-area.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { AuthGuard } from './guards/auth-guard.service';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -30,6 +25,11 @@ import { MessageComponent } from './message/message.component';
 import { UserViewComponent } from './user-view/user-view.component';
 //import { HttpServiceNode } from './http.service.node';
 import { HttpServiceASPNET } from './http.service.aspnet';
+import { JwtModule } from "@auth0/angular-jwt";
+
+export function tokenGetter() {
+  return localStorage.getItem("jwt");
+}
 
 @NgModule({
   declarations: [
@@ -60,9 +60,16 @@ import { HttpServiceASPNET } from './http.service.aspnet';
     MatTabsModule,
     MatCardModule,
     MatCheckboxModule,
-    
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ["localhost:5000"],
+        disallowedRoutes: []
+      }
+    })
   ],
   providers: [
+    AuthGuard,
     {
       provide: 'HttpServiceInterface',
       useExisting: HttpServiceASPNET
