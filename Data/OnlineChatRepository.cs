@@ -50,22 +50,29 @@ namespace OnlineChat.Data
         {
             var query = _context.Users.Where(u => u.Id == id);
 
-            return await query.FirstAsync();
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<User> GetUserByLoginAndPasswordAsync(string login, string password)
         {
             var query = _context.Users.Where(u => u.Login == login && u.Password == password);
-            return await query.FirstAsync();
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<User> GetUserByLoginAsync(string login)
         {
             var query = _context.Users.Where(u => u.Login == login);
-            return await query.FirstAsync();
+            return await query.FirstOrDefaultAsync();
         }
 
-        
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var query = _context.Users.Where(u => u.Email == email);
+            return await query.FirstOrDefaultAsync();
+        }
+
         public async Task<Message[]> GetAllMessagesAsync()
         {
             var query = _context.Messages.Include(m => m.UserFrom).Include(m => m.UserTo);
@@ -77,7 +84,7 @@ namespace OnlineChat.Data
         {
             var query = _context.Messages.Where(m => m.Id == id).Include(m => m.UserFrom).Include(m => m.UserTo);
 
-            return await query.FirstAsync();
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<Message[]> GetMessagesByUserAsync(int userId1, int userId2)

@@ -68,7 +68,7 @@ namespace OnlineChat.Controllers
             try
             {
                 string userIdFromString = User.FindFirst(ClaimTypes.Sid)?.Value;
-                int userIdFrom =1;
+                int userIdFrom =-1;
 
                 if (!String.IsNullOrEmpty(userIdFromString))
                 {
@@ -91,16 +91,28 @@ namespace OnlineChat.Controllers
             }
         }
 
-        [HttpPost/*, Authorize*/]
+        [HttpPost, Authorize]
         public async Task<ActionResult<MessageModel>> Post(MessageModel model)
         {
             try
             {
-                var message = _mapper.Map<Message>(model);
-                _repository.Add(message);
-                if (await _repository.SaveChangesAsync())
+                string userIdFromString = User.FindFirst(ClaimTypes.Sid)?.Value;
+
+                if (!String.IsNullOrEmpty(model.Content) && model.UserToId >= 0 && !String.IsNullOrEmpty(userIdFromString))
                 {
-                    return Created($"/api/messages/{message.Id}", _mapper.Map<MessageModel>(message));
+                    var message = _mapper.Map<Message>(model);
+                    message.UserFromId = int.Parse(userIdFromString);
+                    message.SendTime = DateTime.Now;
+
+                    _repository.Add(message);
+                    if (await _repository.SaveChangesAsync())
+                    {
+                        return Created($"/api/messages/{message.Id}", _mapper.Map<MessageModel>(message));
+                    }
+                }
+                else
+                {
+                    return this.StatusCode(StatusCodes.Status406NotAcceptable, "lack of content of message or userToId.");
                 }
             }
             catch (Exception exception)

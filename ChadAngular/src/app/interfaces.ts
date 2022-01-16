@@ -11,7 +11,7 @@ export interface HttpServiceInterface {
   login(user_name: string, user_password: string): Observable<any>;
 
   // Funkcja umożliwiająca wylogowanie
-  logout(): Observable<Object>;
+  //logout(): Observable<Object>;
 
   // Funkcja umożliwiająca rejestrację
   register(user_name: string, user_email: string, user_password: string): Observable<any>;
@@ -20,7 +20,7 @@ export interface HttpServiceInterface {
 
   getMessages(id: number): Observable<Message[]>;
 
-  sendMessages(mes: Message): Observable<Object>;
+  sendMessages(userId: number, messageContent: string): Observable<Object>;
 
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User);

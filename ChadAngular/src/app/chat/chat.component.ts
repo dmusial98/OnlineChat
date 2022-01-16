@@ -49,8 +49,9 @@ export class ChatComponent {
   }
 
   onMessageSubmit() {
-    var message = new Message(this.selectedUser.id, this.messageForm.value.content, new Date().toUTCString());
-    this.httpService.sendMessages(message).subscribe(_ => {
+
+    this.httpService.sendMessages(this.selectedUser.id, this.messageForm.value.message_text)
+      .subscribe(_ => {
       this.getMessagesWithSelectedUser();
     });
   }
@@ -90,11 +91,14 @@ export class ChatComponent {
   sendMessage(e) {
     //
 
-    this.httpService.sendMessages(new Message(this.selectedUser.id, e, new Date().toString())).subscribe(
+    console.log(e);
+
+    this.httpService.sendMessages(this.selectedUser.id, e).subscribe(
       data => {
         console.log("ChatComponent, onSubmit:", data);
       },
       error => {
+        console.log('error in http send message')
       });
   }
 
@@ -118,8 +122,6 @@ export class ChatComponent {
       ,
       error => {
       });
-
-    console.log(this.users, this.selectedUser);
   }
 
   // funkcja wywoływana gdy zostanie wybrany użytkownik na liście użytkowników

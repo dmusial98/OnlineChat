@@ -18,6 +18,7 @@ namespace OnlineChat.Data
         Task<User> GetUserByIdAsync(int id);
         Task<User> GetUserByLoginAndPasswordAsync(string login, string password);
         Task<User> GetUserByLoginAsync(string login);
+        Task<User> GetUserByEmailAsync(string email);
 
         // Messages
         Task<Message[]> GetAllMessagesAsync();

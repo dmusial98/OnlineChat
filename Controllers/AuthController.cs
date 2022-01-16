@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
 using WebStore.Auth;
 using OnlineChat.Models;
+using OnlineChat.Data.Entities;
 
 namespace WebStore.Controllers
 {
@@ -86,6 +87,34 @@ namespace WebStore.Controllers
             user.RefreshToken = null;
             await _repository.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpPost, Route("register")]
+        public async Task<ActionResult> Register([FromBody] UserModel registerModel)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(registerModel);
+                var theSameUserByLogin = await _repository.GetUserByLoginAsync(user.Login);
+                var theSameUserByEmail = await _repository.GetUserByEmailAsync(user.Email);
+
+                if (theSameUserByLogin == null && theSameUserByEmail == null)
+                {
+                    _repository.Add(user);
+                    if (await _repository.SaveChangesAsync())
+                    {
+                        return Created($"/api/auth/register", _mapper.Map<UserModel>(user));
+                    }
+                }
+                else
+                    return this.StatusCode(StatusCodes.Status406NotAcceptable, "user with the same login or email exists.");
+            }
+            catch(Exception e)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
+
+            return BadRequest();
         }
     }
 }

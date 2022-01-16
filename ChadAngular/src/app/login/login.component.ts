@@ -60,7 +60,15 @@ export class LoginComponent {
     this.registerFormSubmitted = true;
     if (this.registerForm.valid) {
       const formValue = this.registerForm.value
+      console.log(formValue);
       this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
+        .subscribe(response => {
+          console.log(response);
+        }, err => {
+          //jak powtarza sie login albo email wysylam z backendu 406 (Not Acceptable), mozna by to obsluzyc na froncie potem
+          console.log("error in onRegisterSubmit http.subscribe");
+        }
+        )
     }
   }
 
@@ -73,7 +81,6 @@ export class LoginComponent {
       const formValue = this.loginForm.value
       this.httpService.login(formValue.user_name, formValue.user_password)
         .subscribe(response => {
-          console.log('after sending post', response);
           const token = (<any>response).accessToken;
           const refreshToken = (<any>response).refreshToken;
           localStorage.setItem("jwt", token);
