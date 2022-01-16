@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { User } from '../user';
+import { Message } from '../message';
+import { HttpServiceInterface } from '../interfaces';
 
 @Component({
   selector: 'app-user-view',
@@ -13,10 +15,21 @@ export class UserViewComponent implements OnInit {
     "name",
     false
   );
+  message: Message;
 
-  constructor() { }
+  constructor(@Inject('HttpServiceInterface') private httpService: HttpServiceInterface) { }
 
   ngOnInit(): void {
+    this.httpService.getLastMessage(this.user.id).subscribe(
+      _message => {
+        this.message = _message;
+      }, err => {
+        console.log('lack of last message ;(');
+    })
+  }
+
+  getDate(): string {
+    return Message.getDate(this.message.sendTime);
   }
 
 }

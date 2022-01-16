@@ -2,10 +2,15 @@
   <div class="chat_people">
     <img class="chat_img" src="https://ptetutorials.com/images/user-profile.png" alt="sunil">
     <div class="chat_ib">
-      <h5>{{user.login}}<span class="chat_date">Dec 25</span></h5>
-      <p>
-        Test, which is a new approach to have all solutions
-        astrology under one roof.
+      <h5 *ngIf="!message">{{user.login}}<span class="chat_date">No data</span></h5>
+      <h5 *ngIf="message">{{user.login}}<span class="chat_date">{{getDate()}}</span></h5>
+      <p *ngIf="message">
+        <!--Test, which is a new approach to have all solutions
+    astrology under one roof.-->
+        {{message.content}}
+      </p>
+      <p *ngIf="!message">
+        No content
       </p>
     </div>
   </div>

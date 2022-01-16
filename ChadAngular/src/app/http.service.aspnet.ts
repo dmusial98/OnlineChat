@@ -39,8 +39,6 @@ export class HttpServiceASPNET implements HttpServiceInterface {
 
   // Funkcja umożliwiająca rejestrację
   register(user_name: string, user_email: string, user_password: string) {
-    console.log("in register http ", user_email);
-
     return this.httpClient.post("http://localhost:5000/api/auth/register", {
       "role": "user",
       "login": user_name,
@@ -56,6 +54,10 @@ export class HttpServiceASPNET implements HttpServiceInterface {
 
   getMessages(userId: number) {
     return this.httpClient.get<Message[]>(`http://localhost:5000/api/messages/byUser?UserId=${userId}`);
+  }
+
+  getLastMessage(userId: number) {
+    return this.httpClient.get<Message>(`http://localhost:5000/api/messages/betweenUsers?UserId=${userId}`);
   }
 
   sendMessages(userId: number, messageContent: string) {

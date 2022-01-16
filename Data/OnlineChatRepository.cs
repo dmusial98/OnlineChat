@@ -87,11 +87,19 @@ namespace OnlineChat.Data
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<Message[]> GetMessagesByUserAsync(int userId1, int userId2)
+        public async Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2)
         {
             var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserToId == userId1 && m.UserFromId == userId2));
 
             return await query.ToArrayAsync();
+        }
+
+        public async Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2)
+        {
+            var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserFromId == userId2 && m.UserToId == userId1))
+            .OrderByDescending(m => m.SendTime);
+
+            return await query.FirstOrDefaultAsync();
         }
 
     }

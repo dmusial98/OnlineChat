@@ -44,6 +44,7 @@ namespace OnlineChat.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<ActionResult<MessageModel>> Get(int id)
         {
             try
@@ -73,7 +74,7 @@ namespace OnlineChat.Controllers
                 if (!String.IsNullOrEmpty(userIdFromString))
                 {
                     userIdFrom = int.Parse(userIdFromString);
-                    var messages = await _repository.GetMessagesByUserAsync(userId, userIdFrom);
+                    var messages = await _repository.GetMessagesByUsersAsync(userId, userIdFrom);
 
                     if (messages == null)
                         return NotFound();
@@ -84,6 +85,35 @@ namespace OnlineChat.Controllers
                     return this.StatusCode(StatusCodes.Status404NotFound);
 
                 
+            }
+            catch (Exception e)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
+        }
+
+        [HttpGet("betweenUsers"), Authorize]
+        public async Task<ActionResult<MessageModel>> GetLastMessageBetweenTwoUsers(int userId)
+        {
+            try
+            {
+                string userIdFromString = User.FindFirst(ClaimTypes.Sid)?.Value;
+                int userIdFrom = -1;
+
+                if (!String.IsNullOrEmpty(userIdFromString))
+                {
+                    userIdFrom = int.Parse(userIdFromString);
+                    var message = await _repository.GetLastMessageBetweenTwoUsersAync(userId, userIdFrom);
+
+                    if (message == null)
+                        return NotFound();
+
+                    return _mapper.Map<MessageModel>(message);
+                }
+                else
+                    return this.StatusCode(StatusCodes.Status404NotFound);
+
+
             }
             catch (Exception e)
             {

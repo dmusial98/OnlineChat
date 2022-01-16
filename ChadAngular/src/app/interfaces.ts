@@ -20,6 +20,8 @@ export interface HttpServiceInterface {
 
   getMessages(id: number): Observable<Message[]>;
 
+  getLastMessage(userId: number): Observable<Message>;
+
   sendMessages(userId: number, messageContent: string): Observable<Object>;
 
   // Setter ustawiający wartość w polu loginUserData

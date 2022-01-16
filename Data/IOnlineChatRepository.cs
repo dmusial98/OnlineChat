@@ -23,6 +23,7 @@ namespace OnlineChat.Data
         // Messages
         Task<Message[]> GetAllMessagesAsync();
         Task<Message> GetMessageByIdAsync(int id);
-        Task<Message[]> GetMessagesByUserAsync(int userId1, int userId2);
+        Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2);
+        Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2);
     }
 }
