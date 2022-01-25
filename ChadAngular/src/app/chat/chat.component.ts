@@ -52,8 +52,10 @@ export class ChatComponent {
 
     this.httpService.sendMessages(this.selectedUser.id, this.messageForm.value.message_text)
       .subscribe(_ => {
-      this.getMessagesWithSelectedUser();
-    });
+        this.getMessagesWithSelectedUser();
+      });
+
+
   }
 
   filter(filter: string) {
@@ -132,7 +134,7 @@ export class ChatComponent {
 
   // Funkcja pobierające listę wiadomości z danym użytkownikiem
   getMessagesWithSelectedUser() {
-    
+
     if (this.selectedUser) {
       console.log('getMessageWithSelectedUser')
       this.httpService.getMessages(this.selectedUser.id).subscribe(

@@ -8,6 +8,7 @@ using OnlineChat.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace OnlineChat.Controllers
@@ -62,6 +63,7 @@ namespace OnlineChat.Controllers
             try
             {
                 var user = _mapper.Map<User>(model);
+
                 _repository.Add(user);
                 if (await _repository.SaveChangesAsync())
                 {

@@ -5,8 +5,6 @@
       <h5 *ngIf="!message">{{user.login}}<span class="chat_date">No data</span></h5>
       <h5 *ngIf="message">{{user.login}}<span class="chat_date">{{getDate()}}</span></h5>
       <p *ngIf="message">
-        <!--Test, which is a new approach to have all solutions
-    astrology under one roof.-->
         {{message.content}}
       </p>
       <p *ngIf="!message">

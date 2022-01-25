@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebStore.Auth;
 using OnlineChat.Models;
 using OnlineChat.Data.Entities;
+using System.Text.RegularExpressions;
 
 namespace WebStore.Controllers
 {
@@ -100,6 +101,32 @@ namespace WebStore.Controllers
 
                 if (theSameUserByLogin == null && theSameUserByEmail == null)
                 {
+                    Regex hasNumberRegex = new Regex(@"[0-9]+");
+                    Regex hasUpperCaseRegex = new Regex(@"[A-Z]+");
+                    Regex hasMinimum5CharsRegex = new Regex(@".{5,}");
+                    Regex hasSpecialCharacterRegex = new Regex(@"[^\w\d]+");
+
+                    bool hasNumber = hasNumberRegex.IsMatch(user.Password);
+                    bool hasUpperCase = hasUpperCaseRegex.IsMatch(user.Password);
+                    bool hasMinimum5CharsPass = hasMinimum5CharsRegex.IsMatch(user.Password);
+                    bool hasSpecialCharacter = hasSpecialCharacterRegex.IsMatch(user.Password);
+                    bool hasMinimum5CharsLogin = hasMinimum5CharsRegex.IsMatch(user.Login);
+
+                    StringBuilder ErrorMessageStrBuilder = new StringBuilder();
+                    if (!hasMinimum5CharsLogin)
+                        ErrorMessageStrBuilder.Append("Login has to contain minimum 5 characters.\n");
+                    if (!hasMinimum5CharsPass)
+                        ErrorMessageStrBuilder.Append("Password has to contain minimum 5 charaters.\n");
+                    if (!hasUpperCase)
+                        ErrorMessageStrBuilder.Append("Password has to contain minimum 1 upper character.\n");
+                    if (!hasNumber)
+                        ErrorMessageStrBuilder.Append("Password has to contain minimum 1 digit.\n");
+                    if (!hasSpecialCharacter)
+                        ErrorMessageStrBuilder.Append("Password has to contain minimum 1 special character.\n");
+
+                    if (!hasMinimum5CharsLogin || !hasMinimum5CharsPass || !hasUpperCase || !hasSpecialCharacter || !hasNumber)
+                        return this.StatusCode(StatusCodes.Status400BadRequest, $"{ErrorMessageStrBuilder.ToString()}");
+
                     _repository.Add(user);
                     if (await _repository.SaveChangesAsync())
                     {
