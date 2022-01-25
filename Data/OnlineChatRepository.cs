@@ -102,5 +102,11 @@ namespace OnlineChat.Data
             return await query.FirstOrDefaultAsync();
         }
 
+        public async Task<Message[]> GetMessagesByUserAsync(int userId)
+        {
+            var query = _context.Messages.Where(m => m.UserFromId == userId || m.UserToId == userId);
+            return await query.ToArrayAsync();
+        }
+
     }
 }

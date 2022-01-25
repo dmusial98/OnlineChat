@@ -25,5 +25,6 @@ namespace OnlineChat.Data
         Task<Message> GetMessageByIdAsync(int id);
         Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2);
         Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2);
+        Task<Message[]> GetMessagesByUserAsync(int userId);
     }
 }

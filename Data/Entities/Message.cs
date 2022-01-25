@@ -14,6 +14,7 @@ namespace OnlineChat.Data.Entities
         public string Content { get; set; }
         public DateTime SendTime { get; set; }
         public User UserFrom { get; set; }
-        public virtual User UserTo { get; set; }
+        public User UserTo { get; set; }
+        public bool isRead { get; set; } 
     }
 }

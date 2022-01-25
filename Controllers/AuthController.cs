@@ -125,13 +125,12 @@ namespace WebStore.Controllers
                         ErrorMessageStrBuilder.Append("Password has to contain minimum 1 special character.\n");
 
                     if (!hasMinimum5CharsLogin || !hasMinimum5CharsPass || !hasUpperCase || !hasSpecialCharacter || !hasNumber)
-                        return this.StatusCode(StatusCodes.Status400BadRequest, $"{ErrorMessageStrBuilder.ToString()}");
+                        return this.StatusCode(StatusCodes.Status400BadRequest, $"{ErrorMessageStrBuilder}");
 
                     _repository.Add(user);
-                    if (await _repository.SaveChangesAsync())
-                    {
+                    if (await _repository.SaveChangesAsync()) 
                         return Created($"/api/auth/register", _mapper.Map<UserModel>(user));
-                    }
+ 
                 }
                 else
                     return this.StatusCode(StatusCodes.Status406NotAcceptable, "user with the same login or email exists.");

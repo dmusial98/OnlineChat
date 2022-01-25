@@ -10,7 +10,6 @@ namespace OnlineChat.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
         public string Role { get; set; }
         [Required]
         public string Login { get; set; }

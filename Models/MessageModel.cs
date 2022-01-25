@@ -16,5 +16,6 @@ namespace OnlineChat.Models
         public UserModel UserFrom { get; set; }
         [System.Text.Json.Serialization.JsonIgnore]
         public UserModel UserTo { get; set; }
+        public bool isRead { get; set; }
     }
 }
