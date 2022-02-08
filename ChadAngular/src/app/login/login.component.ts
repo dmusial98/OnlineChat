@@ -5,6 +5,8 @@ import { User } from '../user';
 import { FormGroup, FormBuilder, Validators, FormControl, NgForm } from '@angular/forms';
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { AuthGuard } from '../guards/auth-guard.service';
+import { filter, switchMapTo, tap } from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material/snack-bar'; 
 
 @Component({
   selector: 'app-root',
@@ -50,10 +52,17 @@ export class LoginComponent {
     ]),
   });
 
+  openSnackBar( msg:string) {
+    this.snackBar.open(msg, "OK", {
+      duration: 5000
+    });
+  }
+
   constructor(
     private router: Router,
     @Inject('HttpServiceInterface') private httpService: HttpServiceInterface,
-    private authGuard: AuthGuard
+    private authGuard: AuthGuard,
+    private snackBar: MatSnackBar
   ) { }
 
   onRegisterSubmit() {
@@ -62,13 +71,20 @@ export class LoginComponent {
       const formValue = this.registerForm.value
       console.log(formValue);
       this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
-        .subscribe(response => {
-          console.log(response);
-        }, err => {
-          //jak powtarza sie login albo email wysylam z backendu 406 (Not Acceptable), mozna by to obsluzyc na froncie potem
-          console.log("error in onRegisterSubmit http.subscribe");
+      .pipe(tap(response => {
+        if (response.register == false) {
+          this.openSnackBar("Register not complete");
+         }
+      }),
+        filter(response => response.register),
+        switchMapTo(this.httpService.login(formValue.user_name, formValue.user_password)))
+        .subscribe( response => {
+          if (response.loggedin == true) {
+            this.httpService.changedLoginState(response.loggedin);
+            this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
+            this.router.navigateByUrl("/chat")
         }
-        )
+      })
     }
   }
 
@@ -89,6 +105,7 @@ export class LoginComponent {
           this.httpService.loginUserData = new User(this.authGuard.getIdFromJWT(), formValue.user_name, true);
           this.router.navigateByUrl("/chat")
         }, err => {
+          this.openSnackBar("Error");
           this.httpService.changedLoginState(false);
         })
     }

@@ -24,7 +24,7 @@ export class ChatComponent {
   messagesToUser: Message[] = [];
   messageNumber = 0;
 
-  intervalId = setInterval(() => this.getMessagesWithSelectedUser(), 100);
+  intervalId = setInterval(() => this.getMessagesWithSelectedUser(), 1000);
 
   // wybrany uzytkownik
   selectedUser: User = null;

@@ -64,33 +64,6 @@ export class RegisterComponent implements OnInit {
     }
 
     this.loading = true;
-    
-    // Stworzenie obiektu uzytkownika z danych formularza i przesłanie ich do serwera
-    //this.httpService.register(new User(0, this.registerForm.controls.user_name.value, this.registerForm.controls.user_password.value))
-    // Subskrybcja do strumienia danych zwrotnych z zapytania http
-      // .subscribe(
-      //   data => {
-      //     if ("register" in data) {
-      //       if (data["register"] === true) {
-      //         // przejscie do strony logowania jezeli udało się zarejestrować
-      //         this.router.navigate(['/login']);
-      //       } else {
-      //         this.loading = false;
-      //         // dodanie błędów do listy jeżeli nie udało się zarejestrować użytkownika
-      //         this.serverErrors.push(JSON.stringify(data));
-      //         console.log("RegisterComponent, onSubmit:", data);
-      //       }
-      //     } else {
-      //       // dodanie błędów do listy jeżeli nie udało się zarejestrować użytkownika
-      //       this.loading = false;
-      //       this.serverErrors.push(JSON.stringify(data));
-      //       console.log("RegisterComponent, onSubmit:", data);
-      //     }
-
-      //   },
-      //   error => {
-      //     this.loading = false;
-      //   });
 
   }
 }

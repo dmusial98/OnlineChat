@@ -26,6 +26,7 @@ import { UserViewComponent } from './user-view/user-view.component';
 //import { HttpServiceNode } from './http.service.node';
 import { HttpServiceASPNET } from './http.service.aspnet';
 import { JwtModule } from "@auth0/angular-jwt";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -60,6 +61,7 @@ export function tokenGetter() {
     MatTabsModule,
     MatCardModule,
     MatCheckboxModule,
+    MatSnackBarModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
