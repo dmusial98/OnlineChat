@@ -92,7 +92,7 @@ namespace OnlineChat.Controllers
             }
         }
 
-        [HttpGet("betweenUsers"), Authorize]
+        [HttpGet("lastMsgBetweenUsers"), Authorize]
         public async Task<ActionResult<MessageModel>> GetLastMessageBetweenTwoUsers(int userId)
         {
             try

@@ -28,7 +28,7 @@ export class LoginComponent {
     user_name: new FormControl("", [
       Validators.required,
       Validators.minLength(3),
-      Validators.pattern("^[a-zA-Z]+$")
+      Validators.pattern("^[a-zA-Z0-9]+$")
     ]),
     user_email: new FormControl("", [
       Validators.required,
@@ -44,7 +44,7 @@ export class LoginComponent {
     user_name: new FormControl("", [
       Validators.required,
       Validators.minLength(3),
-      Validators.pattern("^[a-zA-Z]+$")
+      Validators.pattern("^[a-zA-Z0-9]+$")
     ]),
     user_password: new FormControl("", [
       Validators.required,
@@ -145,7 +145,7 @@ export class LoginComponent {
       } else if (this.registerForm.controls['user_name'].hasError('minlength')) {
         placeholder = "Username is to short (min 3 characters)";
       } else if (this.registerForm.controls['user_name'].hasError('pattern')) {
-        placeholder = "Username should only consist of letters";
+        placeholder = "Username should only consist of letters or digits";
       }
     }
     return placeholder;
@@ -184,7 +184,7 @@ export class LoginComponent {
       } else if (this.loginForm.controls['user_name'].hasError('minlength')) {
         placeholder = "Username is to short (min 3 characters)";
       } else if (this.loginForm.controls['user_name'].hasError('pattern')) {
-        placeholder = "Username should only consist of letters";
+        placeholder = "Username should only consist of letters or digits";
       }
     }
     return placeholder;
