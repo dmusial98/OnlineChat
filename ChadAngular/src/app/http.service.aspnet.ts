@@ -57,7 +57,7 @@ export class HttpServiceASPNET implements HttpServiceInterface {
   }
 
   getLastMessage(userId: number) {
-    return this.httpClient.get<Message>(`http://localhost:5000/api/messages/betweenUsers?UserId=${userId}`);
+    return this.httpClient.get<Message>(`http://localhost:5000/api/messages/lastMsgBetweenUsers?UserId=${userId}`);
   }
 
   sendMessages(userId: number, messageContent: string) {
