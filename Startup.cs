@@ -15,7 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using WebStore.Auth;
+using OnlineChat.Auth;
 
 namespace OnlineChat
 {

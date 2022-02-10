@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from '../user';
 import { Message } from '../message';
 import { MessageWSService } from '../message-ws.service';
+import { AuthGuard } from '../guards/auth-guard.service';
 import { HttpServiceInterface } from '../interfaces';
 import { first } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -36,6 +37,7 @@ export class ChatComponent {
   constructor(
     private router: Router,
     private wsService: MessageWSService,
+    private authGuard: AuthGuard,
     @Inject('HttpServiceInterface') private httpService: HttpServiceInterface,
   ) {
     // Sprawdzenie czy uzytkownik nie jest zalogowany, jezeli tak - przejscie do głownego panelu
@@ -142,6 +144,8 @@ export class ChatComponent {
           this.messagesToUser = data;
         },
         error => {
+          console.log("error in getMessagesWithSelectedUser");
+          this.authGuard.tryRefreshingTokens(localStorage.getItem("jwt"));
         });
       var newMessageNumber = this.messagesToUser.length
       if (this.messageNumber != newMessageNumber) {

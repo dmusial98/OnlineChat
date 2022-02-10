@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
     return isRefreshSuccess;
   }
 
-  private async tryRefreshingTokens(token: string | null): Promise<boolean> {
+  async tryRefreshingTokens(token: string | null): Promise<boolean> {
     // Try refreshing tokens using refresh token
     const refreshToken = localStorage.getItem("refreshToken");
     if (!token || !refreshToken) {

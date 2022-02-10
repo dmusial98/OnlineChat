@@ -12,7 +12,7 @@ using OnlineChat.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
-using WebStore.Auth;
+using OnlineChat.Auth;
 using OnlineChat.Models;
 using OnlineChat.Data.Entities;
 using System.Text.RegularExpressions;
