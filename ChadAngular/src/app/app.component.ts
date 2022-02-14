@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpServiceInterface } from './interfaces';
-import { first } from 'rxjs/operators';
+import { catchError, first } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -19,12 +20,18 @@ export class AppComponent {
   title = 'mdb-angular-free';
 
   successAlert = false;
-  intervalId = setInterval(() => this.checkForUnreadMessages(), 1000);
+  interval: any;
 
   constructor(
     private router: Router,
     @Inject('HttpServiceInterface') public httpService: HttpServiceInterface,
-  ){}
+  ){
+    this.httpService.loggedIn.subscribe((value) => {
+      if(value == true) {
+        this.interval = setInterval(() => this.checkForUnreadMessages(), 1000)
+      }
+    } 
+)}
 
   navigateToChat(){
     this.router.navigate(['/chat']);
@@ -56,18 +63,11 @@ export class AppComponent {
   }
 
   checkForUnreadMessages(){
-    try{
       this.httpService.getUnreadMessagesNumber()
       .subscribe((number) => {
-        data => {
-          console.log("number of unread: " + number)
-          this.setUnreadMessageNumber(number);
-        }
-        error => {
-
-        }
+        console.log("number of unread: " + number)
+        this.setUnreadMessageNumber(number);
       })
-    } catch { }
     
   }
 
