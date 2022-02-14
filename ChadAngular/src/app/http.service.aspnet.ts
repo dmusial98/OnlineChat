@@ -66,6 +66,15 @@ export class HttpServiceASPNET implements HttpServiceInterface {
       "content": messageContent
     });
   }
+
+  getUnreadMessagesNumber(): Observable<number> {
+    return this.httpClient.get<number>("http://localhost:5000/api/users/unreadMessages");
+  }
+  
+  markMessagesAsRead(id: number): Observable<any>{
+    return this.httpClient.head(`http://localhost:5000/api/users/markMessagesAsRead/` + id);
+  }
+
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User) {
     this.loginUserData = user;

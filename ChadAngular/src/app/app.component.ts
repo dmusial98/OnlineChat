@@ -19,6 +19,7 @@ export class AppComponent {
   title = 'mdb-angular-free';
 
   successAlert = false;
+  intervalId = setInterval(() => this.checkForUnreadMessages(), 1000);
 
   constructor(
     private router: Router,
@@ -52,6 +53,22 @@ export class AppComponent {
     localStorage.removeItem("jwt");
     localStorage.removeItem("refreshToken");
     this.router.navigate(['/login']);
+  }
+
+  checkForUnreadMessages(){
+    try{
+      this.httpService.getUnreadMessagesNumber()
+      .subscribe((number) => {
+        data => {
+          console.log("number of unread: " + number)
+          this.setUnreadMessageNumber(number);
+        }
+        error => {
+
+        }
+      })
+    } catch { }
+    
   }
 
   setUnreadMessageNumber(value: number){

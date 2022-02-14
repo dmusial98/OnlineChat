@@ -105,7 +105,7 @@ export class LoginComponent {
           this.httpService.loginUserData = new User(this.authGuard.getIdFromJWT(), formValue.user_name, true);
           this.router.navigateByUrl("/chat")
         }, err => {
-          this.openSnackBar("Error");
+          this.openSnackBar("Unsuccessful login");
           this.httpService.changedLoginState(false);
         })
     }

@@ -16,10 +16,15 @@ export class UserViewComponent implements OnInit {
     false
   );
   message: Message;
+  intervalId = setInterval(() => this.getLast(), 1000);
 
   constructor(@Inject('HttpServiceInterface') private httpService: HttpServiceInterface) { }
 
   ngOnInit(): void {
+    this.getLast();
+  }
+
+  getLast() {
     this.httpService.getLastMessage(this.user.id).subscribe(
       _message => {
         this.message = _message;

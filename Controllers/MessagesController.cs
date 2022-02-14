@@ -29,7 +29,7 @@ namespace OnlineChat.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        [HttpGet/*, Authorize*/]
+        [HttpGet, Authorize]
         public async Task<ActionResult<MessageModel[]>> Get()
         {
             try

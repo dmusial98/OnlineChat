@@ -153,7 +153,7 @@ namespace OnlineChat.Controllers
             }
         }
 
-        [HttpGet("unreadMessages"), Authorize]
+        [HttpGet("unreadMessages")]
         public async Task<ActionResult<int>> GetNumberOfUnreadMessages()
         {
             try

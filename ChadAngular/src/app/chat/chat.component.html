@@ -39,7 +39,8 @@
           rows="1"
           placeholder="Type a message"
           oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
-          formControlName="message_text"        
+          formControlName="message_text"  
+          (keyup.enter)="onMessageSubmit()"      
           ></textarea>
         <button class="msg_send_btn" type="button" type="submit">
           <i class="fa fa-paper-plane-o" aria-hidden="true"></i>

@@ -24,6 +24,10 @@ export interface HttpServiceInterface {
 
   sendMessages(userId: number, messageContent: string): Observable<Object>;
 
+  getUnreadMessagesNumber(): Observable<number>;
+
+  markMessagesAsRead(id: number): Observable<any>;
+
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User);
 }

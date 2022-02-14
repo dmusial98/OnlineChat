@@ -51,8 +51,9 @@ export class ChatComponent {
   }
 
   onMessageSubmit() {
-
-    this.httpService.sendMessages(this.selectedUser.id, this.messageForm.value.message_text)
+    var msg = this.messageForm.value.message_text;
+    this.messageForm.reset();
+    this.httpService.sendMessages(this.selectedUser.id, msg)
       .subscribe(_ => {
         this.getMessagesWithSelectedUser();
       });
@@ -142,11 +143,20 @@ export class ChatComponent {
       this.httpService.getMessages(this.selectedUser.id).subscribe(
         data => {
           this.messagesToUser = data;
+          this.httpService.getLastMessage(this.selectedUser.id)
+          .subscribe(messsage => {
+            if(messsage.userFromId == this.selectedUser.id){
+              this.httpService.markMessagesAsRead(this.selectedUser.id)
+              .subscribe(() => {console.log("markMEssagesAsRead insides" + this.selectedUser.id)});
+            }
+          })
         },
         error => {
           console.log("error in getMessagesWithSelectedUser");
           this.authGuard.tryRefreshingTokens(localStorage.getItem("jwt"));
         });
+        
+    }  
       var newMessageNumber = this.messagesToUser.length
       if (this.messageNumber != newMessageNumber) {
         this.messageNumber = newMessageNumber
@@ -154,7 +164,7 @@ export class ChatComponent {
           this.messageScrollContainer.nativeElement.scrollTop = this.messageScrollContainer.nativeElement.scrollHeight;
         } catch (err) { }
       }
-    }
+
   }
 
 
