@@ -19,11 +19,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-//import { HttpService } from './http.service';
-//import { HttpServiceMock } from './http.service.mock';
 import { MessageComponent } from './message/message.component';
 import { UserViewComponent } from './user-view/user-view.component';
-//import { HttpServiceNode } from './http.service.node';
 import { HttpServiceASPNET } from './http.service.aspnet';
 import { JwtModule } from "@auth0/angular-jwt";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
@@ -65,7 +62,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ["localhost:5000"],
+        allowedDomains: ["localhost:5000", "onlinechat.azurewebsites.net"],
         disallowedRoutes: []
       }
     })

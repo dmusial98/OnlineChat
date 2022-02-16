@@ -57,8 +57,10 @@ namespace OnlineChat
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "http://localhost:5000",
-                        ValidAudience = "http://localhost:5000",
+                        //ValidIssuer = "http://localhost:5000",
+                        ValidIssuer = "https://onlinechat.azurewebsites.net",
+                        //ValidAudience = "http://localhost:5000",
+                        ValidAudience = "https://onlinechat.azurewebsites.net",
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
                     };
                 });

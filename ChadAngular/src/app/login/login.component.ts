@@ -69,7 +69,7 @@ export class LoginComponent {
     this.registerFormSubmitted = true;
     if (this.registerForm.valid) {
       const formValue = this.registerForm.value
-      console.log(formValue);
+      //console.log(formValue);
       this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
       .pipe(tap(response => {
         if (response.register == false) {

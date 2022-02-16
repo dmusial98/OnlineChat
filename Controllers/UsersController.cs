@@ -35,13 +35,29 @@ namespace OnlineChat.Controllers
             try
             {
                 string role = User.FindFirst(ClaimTypes.Role)?.Value;
-                if (role == "admin")
+                if (role != "admin")
                 {
                     var result = await _repository.GetAllUsersAsync();
+
+                    foreach(var user in result)
+                    {
+                        user.Password = null;
+                        user.Email = null;
+                        user.RefreshToken = null;
+                        user.RefreshTokenExpiryTime = DateTime.MinValue;
+                    }
+
                     return _mapper.Map<UserModel[]>(result);
                 }
                 else
-                    return this.Forbid();
+                {
+                    var result = await _repository.GetAllUsersAsync();
+
+                    foreach (var user in result)
+                        user.Password = null;
+
+                    return _mapper.Map<UserModel[]>(result);
+                }
             }
             catch (Exception)
             {

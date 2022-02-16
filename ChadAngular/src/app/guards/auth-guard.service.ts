@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
     console.log(credentials);
     let isRefreshSuccess: boolean;
     try {
-      const response = await this.http.post("http://localhost:5000/api/token/refresh", credentials, {
+      const response = await this.http.post("https://onlinechat.azurewebsites.net/api/token/refresh", credentials, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
         }),
