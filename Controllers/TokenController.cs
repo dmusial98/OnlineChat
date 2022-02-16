@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
 using OnlineChat.Models;
 using OnlineChat.Auth;
 using OnlineChat.Data;
@@ -37,7 +36,7 @@ namespace webapplication.Controllers
             var principal = tokenService.GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-            var user = await _repository.GetUserByLoginAsync(username);
+            var user = await _repository.GetUserByLoginAsync(username, withTracking: true);
 
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             {
@@ -63,7 +62,7 @@ namespace webapplication.Controllers
         {
             var username = User.Identity.Name;
 
-            var user = await _repository.GetUserByLoginAsync(username);
+            var user = await _repository.GetUserByLoginAsync(username, withTracking: true);
             if (user == null) return BadRequest();
 
             user.RefreshToken = null;

@@ -7,8 +7,6 @@ using OnlineChat.Data;
 using OnlineChat.Data.Entities;
 using OnlineChat.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -20,7 +18,7 @@ namespace OnlineChat.Controllers
     {
         private readonly IOnlineChatRepository _repository;
         private readonly IMapper _mapper;
-        private readonly LinkGenerator _linkGenerator;
+        private readonly LinkGenerator _linkGenerator; //TODO
 
         public MessagesController(IOnlineChatRepository repository, IMapper mapper, LinkGenerator linkGenerator)
         {
@@ -34,8 +32,15 @@ namespace OnlineChat.Controllers
         {
             try
             {
-                var result = await _repository.GetAllMessagesAsync();
-                return _mapper.Map<MessageModel[]>(result);
+                string role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (role == "admin")
+                {
+
+                    var result = await _repository.GetAllMessagesAsync();
+                    return _mapper.Map<MessageModel[]>(result);
+                }
+                else
+                    return this.StatusCode(StatusCodes.Status403Forbidden);
             }
             catch (Exception)
             {
@@ -49,12 +54,21 @@ namespace OnlineChat.Controllers
         {
             try
             {
-                var product = await _repository.GetMessageByIdAsync(id);
+                string role = User.FindFirst(ClaimTypes.Role)?.Value;
+                var message = await _repository.GetMessageByIdAsync(id);
+                string userFromIdString = User.FindFirst(ClaimTypes.Sid)?.Value;
+                int userFromId = -1;
 
-                if (product == null) return NotFound();
+                if (role == "admin" ||
+                    (int.TryParse(userFromIdString, out userFromId) && (message.UserFromId == userFromId || message.UserToId == userFromId)))
+                {
 
-                return _mapper.Map<MessageModel>(product);
+                    if (message == null) return NotFound();
 
+                    return _mapper.Map<MessageModel>(message);
+                }
+                else
+                    return this.StatusCode(StatusCodes.Status403Forbidden);
             }
             catch (Exception e)
             {
@@ -68,14 +82,12 @@ namespace OnlineChat.Controllers
         {
             try
             {
-                string userIdFromString = User.FindFirst(ClaimTypes.Sid)?.Value;
-                int userIdFrom =-1;
+                string userFromIdString = User.FindFirst(ClaimTypes.Sid)?.Value;
+                int userFromId = -1;
 
-                if (!String.IsNullOrEmpty(userIdFromString))
+                if (int.TryParse(userFromIdString, out userFromId))
                 {
-                    userIdFrom = int.Parse(userIdFromString);
-                    var messages = await _repository.GetMessagesByUsersAsync(userId, userIdFrom);
-
+                    var messages = await _repository.GetMessagesByUsersAsync(userId, userFromId);
                     if (messages == null)
                         return NotFound();
 
@@ -100,11 +112,9 @@ namespace OnlineChat.Controllers
                 string userIdFromString = User.FindFirst(ClaimTypes.Sid)?.Value;
                 int userIdFrom = -1;
 
-                if (!String.IsNullOrEmpty(userIdFromString))
+                if (int.TryParse(userIdFromString, out userIdFrom))
                 {
-                    userIdFrom = int.Parse(userIdFromString);
                     var message = await _repository.GetLastMessageBetweenTwoUsersAync(userId, userIdFrom);
-
                     if (message == null)
                         return NotFound();
 
@@ -153,48 +163,64 @@ namespace OnlineChat.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{id:int}")]
+        //[HttpPut("{id:int}")]
         //[Authorize]
-        public async Task<ActionResult<MessageModel>> Put(int id, MessageModel model)
-        {
-            try
-            {
-                var oldProduct = await _repository.GetMessageByIdAsync(id);
-                if (oldProduct == null) return NotFound($"Could not find message with id equal {id}");
+        //public async Task<ActionResult<MessageModel>> Put(int id, MessageModel model)
+        //{
+        //    //TODO: Only message's author can modify it
 
-                _mapper.Map(model, oldProduct);
+        //    try
+        //    {
+        //        var message = await _repository.GetMessageByIdAsync(id, withTracking: true);
+        //        string userFromIdString = User.FindFirst(ClaimTypes.Sid)?.Value;
+        //        int userFromId = -1;
 
-                if (await _repository.SaveChangesAsync())
-                    return _mapper.Map<MessageModel>(oldProduct);
-            }
-            catch (Exception exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
-            }
+        //        if (message == null)
+        //            return NotFound($"Could not find message with id equals {id}");
+        //        else if (int.TryParse(userFromIdString, out userFromId) && message.UserFromId == userFromId)
+        //        {
+        //            if (model.Id > 0 && !String.IsNullOrEmpty(model.Content) && model.UserToId == message.UserToId && model.UserFromId == message.UserFromId)
+        //            {
+        //                _mapper.Map(model, message);
 
-            return BadRequest();
-        }
+        //                if (await _repository.SaveChangesAsync())
+        //                    return _mapper.Map<MessageModel>(message);
+        //            }
+        //            else return this.StatusCode(StatusCodes.Status406NotAcceptable);
+        //        }
+        //        else
+        //            return this.Forbid();
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
+        //    }
 
-        [HttpDelete("{id:int}")]
-        //[Authorize]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var oldProduct = await _repository.GetMessageByIdAsync(id);
-                if (oldProduct == null) return NotFound($"Could not find message with id equal {id}");
+        //    return BadRequest();
+        //}
 
-                _repository.Delete(oldProduct);
+        //    [HttpDelete("{id:int}")]
+        //    [Authorize]
+        //    public async Task<IActionResult> Delete(int id)
+        //    {
+        //        //TODO: Only author can delete message
 
-                if (await _repository.SaveChangesAsync())
-                    return Ok();
-            }
-            catch (Exception exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
-            }
+        //        try
+        //        {
+        //            var oldProduct = await _repository.GetMessageByIdAsync(id, withTracking: true);
+        //            if (oldProduct == null) return NotFound($"Could not find message with id equal {id}");
 
-            return BadRequest();
-        }
+        //            _repository.Delete(oldProduct);
+
+        //            if (await _repository.SaveChangesAsync())
+        //                return Ok();
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
+        //        }
+
+        //        return BadRequest();
+        //    }
     }
 }

@@ -7,10 +7,8 @@ using OnlineChat.Data;
 using OnlineChat.Data.Entities;
 using OnlineChat.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OnlineChat.Controllers
@@ -31,13 +29,19 @@ namespace OnlineChat.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public async Task<ActionResult<UserModel[]>> Get()
         {
             try
             {
-                var result = await _repository.GetAllUsersAsync();
-                return _mapper.Map<UserModel[]>(result);
+                string role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (role == "admin")
+                {
+                    var result = await _repository.GetAllUsersAsync();
+                    return _mapper.Map<UserModel[]>(result);
+                }
+                else
+                    return this.Forbid();
             }
             catch (Exception)
             {
@@ -45,13 +49,22 @@ namespace OnlineChat.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}"), Authorize]
         public async Task<ActionResult<UserModel>> Get(int id)
         {
             try
             {
-                var result = await _repository.GetUserByIdAsync(id);
-                return _mapper.Map<UserModel>(result);
+                string role = User.FindFirst(ClaimTypes.Role)?.Value;
+                string userFromIdString = User.FindFirst(ClaimTypes.Sid)?.Value;
+                int userFromId = -1;
+
+                if (role == "admin" || (int.TryParse(userFromIdString, out userFromId) && userFromId == id))
+                {
+                    var result = await _repository.GetUserByIdAsync(id);
+                    return _mapper.Map<UserModel>(result);
+                }
+                else
+                    return this.Forbid();
             }
             catch (Exception)
             {
@@ -59,39 +72,77 @@ namespace OnlineChat.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<UserModel>> Post(UserModel model)
-        {
-            try
-            {
-                var user = _mapper.Map<User>(model);
+        //[HttpPost, Authorize]
+        //public async Task<ActionResult<UserModel>> Post(UserModel model)
+        //{
+        //    try
+        //    {
+        //        var user = _mapper.Map<User>(model);
 
-                _repository.Add(user);
-                if (await _repository.SaveChangesAsync())
-                {
-                    return Created($"/api/users/{user.Id}", _mapper.Map<UserModel>(user));
-                }
-            }
-            catch (Exception exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
-            }
+        //        _repository.Add(user);
+        //        if (await _repository.SaveChangesAsync())
+        //        {
+        //            return Created($"/api/users/{user.Id}", _mapper.Map<UserModel>(user));
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
+        //    }
 
-            return BadRequest();
-        }
+        //    return BadRequest();
+        //}
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}"), Authorize]
         public async Task<ActionResult<UserModel>> Put(int id, UserModel model)
         {
             try
             {
-                var oldUser = await _repository.GetUserByIdAsync(id);
-                if (oldUser == null) return NotFound($"Could not find user with id equal {id}");
+                string userFromIdString = User.FindFirst(ClaimTypes.Sid)?.Value;
+                int userFromId = -1;
+                string role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-                _mapper.Map(model, oldUser);
+                var user = await _repository.GetUserByIdAsync(id, withTracking: true);
+                if (user == null) 
+                    return NotFound($"Could not find user with id equal {id}");
 
-                if (await _repository.SaveChangesAsync())
-                    return _mapper.Map<UserModel>(oldUser);
+                if ((role == "admin" || (int.TryParse(userFromIdString, out userFromId) && userFromId == id && id == user.Id)))
+                {
+                    User oldUser = new User
+                    {
+                        Id = user.Id,
+                        Role = user.Role,
+                        Login = user.Login,
+                        Password = user.Password,
+                        Email = user.Email,
+                        RefreshToken = user.RefreshToken,
+                        RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
+                    };
+
+                    //user wants to change role from normal user to admin
+                    if (oldUser.Role == "user" && model.Role == "admin" && role != "admin")
+                        return this.Forbid();
+
+                    //Id and Login cannot change
+                    if (model.Id != oldUser.Id || model.Login != oldUser.Login)
+                        return this.Forbid();
+              
+                    //cannot set new email for user from exists email in database
+                    if(model.Email != oldUser.Email)
+                    {
+                        var userWithTheSameEmail = await _repository.GetUserByEmailAsync(model.Email);
+                        if (userWithTheSameEmail is not null)
+                            return this.Forbid();
+                    }
+
+                    _mapper.Map(model, user);
+                    user.RefreshToken = oldUser.RefreshToken;
+                    user.RefreshTokenExpiryTime = oldUser.RefreshTokenExpiryTime;
+
+                    if (await _repository.SaveChangesAsync())
+                        return _mapper.Map<UserModel>(user);
+                }
+                
             }
             catch (Exception exception)
             {
@@ -101,26 +152,26 @@ namespace OnlineChat.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var oldUser = await _repository.GetUserByIdAsync(id);
-                if (oldUser == null) return NotFound($"Could not find user with id equal {id}");
+        //[HttpDelete("{id:int}")]
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    try
+        //    {
+        //        var oldUser = await _repository.GetUserByIdAsync(id, withTracking: true);
+        //        if (oldUser == null) return NotFound($"Could not find user with id equal {id}");
 
-                _repository.Delete(oldUser);
+        //        _repository.Delete(oldUser);
 
-                if (await _repository.SaveChangesAsync())
-                    return Ok();
-            }
-            catch (Exception exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
-            }
+        //        if (await _repository.SaveChangesAsync())
+        //            return Ok();
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, $"{exception.Message}");
+        //    }
 
-            return BadRequest();
-        }
+        //    return BadRequest();
+        //}
 
         [HttpHead("markMessagesAsRead/{id:int}"), Authorize]
         public async Task<IActionResult> MarkMessagesAsRead(int id)
@@ -134,13 +185,22 @@ namespace OnlineChat.Controllers
                 {
                     userIdFrom = int.Parse(userIdFromString);
 
-                    var messages = await _repository.GetMessagesByUsersAsync(userIdFrom, id);
+                    var messages = await _repository.GetMessagesByUsersAsync(userIdFrom, id, withTracking: true);
                     var newMessages = messages.Where(m => m.isRead == false);
 
-                    foreach (var mess in newMessages)
-                        mess.isRead = true;
+                    bool wasChange = false;
 
-                    await _repository.SaveChangesAsync();
+                    foreach (var mess in newMessages)
+                    {
+                        if (!mess.isRead)
+                        {
+                            mess.isRead = true;
+                            wasChange = true;
+                        }
+                    }
+                        
+                    if(wasChange)
+                        await _repository.SaveChangesAsync();
 
                     return Ok();
                 }
@@ -153,7 +213,7 @@ namespace OnlineChat.Controllers
             }
         }
 
-        [HttpGet("unreadMessages")]
+        [HttpGet("unreadMessages"), Authorize]
         public async Task<ActionResult<int>> GetNumberOfUnreadMessages()
         {
             try
