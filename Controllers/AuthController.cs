@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +9,6 @@ using AutoMapper;
 using OnlineChat.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.IdentityModel.Tokens;
 using OnlineChat.Auth;
 using OnlineChat.Models;
 using OnlineChat.Data.Entities;
@@ -51,7 +48,7 @@ namespace WebStore.Controllers
                 }
 
                 var user = await _repository.GetUserByLoginAndPasswordAsync(
-                    loginModel.Login, loginModel.Password);
+                    loginModel.Login, loginModel.Password, withTracking: true);
 
                 if (user == null)
                     return Unauthorized();
@@ -87,7 +84,7 @@ namespace WebStore.Controllers
         public async Task<ActionResult> Revoke(UserModel model)
         {
             var username = model.Login;
-            var user = await _repository.GetUserByLoginAsync(username);
+            var user = await _repository.GetUserByLoginAsync(username, withTracking: true);
             if (user == null) return BadRequest();
             user.RefreshToken = null;
             await _repository.SaveChangesAsync();

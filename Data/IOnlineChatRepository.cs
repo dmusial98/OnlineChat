@@ -14,17 +14,17 @@ namespace OnlineChat.Data
         Task<bool> SaveChangesAsync();
 
         // Users
-        Task<User[]> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> GetUserByLoginAndPasswordAsync(string login, string password);
-        Task<User> GetUserByLoginAsync(string login);
-        Task<User> GetUserByEmailAsync(string email);
+        Task<User[]> GetAllUsersAsync(bool withTracking = false);
+        Task<User> GetUserByIdAsync(int id, bool withTracking = false);
+        Task<User> GetUserByLoginAndPasswordAsync(string login, string password, bool withTracking = false);
+        Task<User> GetUserByLoginAsync(string login, bool withTracking = false);
+        Task<User> GetUserByEmailAsync(string email, bool withTracking = false);
 
         // Messages
-        Task<Message[]> GetAllMessagesAsync();
-        Task<Message> GetMessageByIdAsync(int id);
-        Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2);
-        Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2);
-        Task<Message[]> GetMessagesByUserAsync(int userId);
+        Task<Message[]> GetAllMessagesAsync(bool withTracking = false);
+        Task<Message> GetMessageByIdAsync(int id, bool withTracking = false);
+        Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2, bool withTracking = false);
+        Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2, bool withTracking = false);
+        Task<Message[]> GetMessagesByUserAsync(int userId, bool withTracking = false);
     }
 }

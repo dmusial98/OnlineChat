@@ -16,13 +16,16 @@ export class HttpServiceASPNET implements HttpServiceInterface {
 
   constructor(private httpClient: HttpClient) { }
 
+  //apiUrl = "http://localhost:5000/api";
+  apiUrl = "https://onlinechat.azurewebsites.net/api";
+
   changedLoginState(state: boolean) {
     this.loggedIn.next(state)
   }
 
   // Funkcja umożliwiająca logowanie
   login(user_name: string, user_password: string) {
-    let response = this.httpClient.post("http://localhost:5000/api/auth/login", {
+    let response = this.httpClient.post( `${this.apiUrl}/auth/login`, {
       "login": user_name,
       "password": user_password
     });
@@ -32,14 +35,9 @@ export class HttpServiceASPNET implements HttpServiceInterface {
     return response;
   }
 
-  // Funkcja umożliwiająca wylogowanie -> niepotrzebna, wystarczy jak usuniemy JWT z pamieci przegladarki
-  //logout() {
-  //  return this.httpClient.get("api/logout/");
-  //}
-
   // Funkcja umożliwiająca rejestrację
   register(user_name: string, user_email: string, user_password: string) {
-    return this.httpClient.post("http://localhost:5000/api/auth/register", {
+    return this.httpClient.post(`${this.apiUrl}/auth/register`, {
       "role": "user",
       "login": user_name,
       "password": user_password,
@@ -48,31 +46,30 @@ export class HttpServiceASPNET implements HttpServiceInterface {
   }
 
   getUsers() {
-    return this.httpClient.get<User[]>("http://localhost:5000/api/users");
-/*    return this.httpClient.get("/api/users/")*/
+    return this.httpClient.get<User[]>(`${this.apiUrl}/users`);
   }
 
   getMessages(userId: number) {
-    return this.httpClient.get<Message[]>(`http://localhost:5000/api/messages/byUser?UserId=${userId}`);
+    return this.httpClient.get<Message[]>(`${this.apiUrl}/messages/byUser?UserId=${userId}`);
   }
 
   getLastMessage(userId: number) {
-    return this.httpClient.get<Message>(`http://localhost:5000/api/messages/lastMsgBetweenUsers?UserId=${userId}`);
+    return this.httpClient.get<Message>(`${this.apiUrl}/messages/lastMsgBetweenUsers?UserId=${userId}`);
   }
 
   sendMessages(userId: number, messageContent: string) {
-    return this.httpClient.post("http://localhost:5000/api/messages", {
+    return this.httpClient.post(`${this.apiUrl}/messages`, {
       "userToId": userId.toString(),
       "content": messageContent
     });
   }
 
   getUnreadMessagesNumber(): Observable<number> {
-    return this.httpClient.get<number>("http://localhost:5000/api/users/unreadMessages");
+    return this.httpClient.get<number>(`${this.apiUrl}/users/unreadMessages`);
   }
   
   markMessagesAsRead(id: number): Observable<any>{
-    return this.httpClient.head(`http://localhost:5000/api/users/markMessagesAsRead/` + id);
+    return this.httpClient.head(`${this.apiUrl}/users/markMessagesAsRead/` + id);
   }
 
   sendChaptchaData(captchaResponse: string): Observable<any>{

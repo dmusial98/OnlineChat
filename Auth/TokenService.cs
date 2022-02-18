@@ -17,8 +17,10 @@ namespace OnlineChat.Auth
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokeOptions = new JwtSecurityToken(
-                issuer: "http://localhost:5000",
-                audience: "http://localhost:5000",
+                //issuer: "http://localhost:5000",
+                issuer: "https://onlinechat.azurewebsites.net",
+                //audience: "http://localhost:5000",
+                audience: "https://onlinechat.azurewebsites.net",
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: signinCredentials

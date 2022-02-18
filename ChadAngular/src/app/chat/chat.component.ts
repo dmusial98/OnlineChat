@@ -94,16 +94,14 @@ export class ChatComponent {
 
   // Funkcja wysyłająca wiadomość
   sendMessage(e) {
-    //
-
-    console.log(e);
+    //console.log(e);
 
     this.httpService.sendMessages(this.selectedUser.id, e).subscribe(
       data => {
-        console.log("ChatComponent, onSubmit:", data);
+        //console.log("ChatComponent, onSubmit:", data);
       },
       error => {
-        console.log('error in http send message')
+        //console.log('error in http send message')
       });
   }
 
@@ -112,19 +110,8 @@ export class ChatComponent {
     this.httpService.getUsers().subscribe(
       data => {
         this.users = data; this.filteredUsers = data;
-        console.log(this.users, this.filteredUsers);
-      }
-
-      //{
-      //  if ("data" in data) {
-      //    console.log("data");
-      //    if (Array.isArray(data["data"])) {
-      //      this.users = data["data"] as User[];
-      //      this.filteredUsers = this.users
-      //    }
-      //  }
-      //}
-      ,
+        //console.log(this.users, this.filteredUsers);
+      },
       error => {
       });
   }
@@ -139,7 +126,7 @@ export class ChatComponent {
   getMessagesWithSelectedUser() {
 
     if (this.selectedUser) {
-      console.log('getMessageWithSelectedUser')
+      //console.log('getMessageWithSelectedUser')
       this.httpService.getMessages(this.selectedUser.id).subscribe(
         data => {
           this.messagesToUser = data;
@@ -148,7 +135,7 @@ export class ChatComponent {
             messsage => {
             if(messsage.userFromId == this.selectedUser.id){
               this.httpService.markMessagesAsRead(this.selectedUser.id)
-              .subscribe(() => {console.log("markMEssagesAsRead insides" + this.selectedUser.id)});
+              .subscribe(() => {/*console.log("markMessagesAsRead insides" + this.selectedUser.id)*/});
             }
           }, error => {
             
@@ -156,7 +143,7 @@ export class ChatComponent {
           )
         },
         error => {
-          console.log("error in getMessagesWithSelectedUser");
+          /*console.log("error in getMessagesWithSelectedUser");*/
           this.authGuard.tryRefreshingTokens(localStorage.getItem("jwt"));
         });
         

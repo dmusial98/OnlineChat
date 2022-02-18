@@ -39,73 +39,153 @@ namespace OnlineChat.Data
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<User[]> GetAllUsersAsync()
+        public async Task<User[]> GetAllUsersAsync(bool withTracking = false)
         {
-            var query = _context.Users.Include(u => u.MessagesFrom).Include(u=> u.MessagesTo);
-
-            return await query.ToArrayAsync();
+            if(!withTracking)
+            {
+                var query = _context.Users.Include(u => u.MessagesFrom).Include(u => u.MessagesTo).AsSplitQuery().AsNoTracking();
+                return await query.ToArrayAsync();
+            }
+            else
+            {
+                var query = _context.Users.Include(u => u.MessagesFrom).Include(u => u.MessagesTo).AsSplitQuery().AsTracking();
+                return await query.ToArrayAsync();
+            }
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(int id, bool withTracking = false)
         {
-            var query = _context.Users.Where(u => u.Id == id);
-
-            return await query.FirstOrDefaultAsync();
+            if(!withTracking)
+            {
+                var query = _context.Users.Where(u => u.Id == id).AsNoTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                var query = _context.Users.Where(u => u.Id == id).AsTracking();
+                return await query.FirstOrDefaultAsync();
+            }
         }
 
-        public async Task<User> GetUserByLoginAndPasswordAsync(string login, string password)
+        public async Task<User> GetUserByLoginAndPasswordAsync(string login, string password, bool withTracking = false)
         {
-            var query = _context.Users.Where(u => u.Login == login && u.Password == password);
-
-            return await query.FirstOrDefaultAsync();
+            if(!withTracking)
+            {
+                var query = _context.Users.Where(u => u.Login == login && u.Password == password).AsNoTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                var query = _context.Users.Where(u => u.Login == login && u.Password == password).AsTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            
         }
 
-        public async Task<User> GetUserByLoginAsync(string login)
+        public async Task<User> GetUserByLoginAsync(string login, bool withTracking = false)
         {
-            var query = _context.Users.Where(u => u.Login == login);
-            return await query.FirstOrDefaultAsync();
+            if(!withTracking)
+            {
+                var query = _context.Users.Where(u => u.Login == login).AsNoTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                var query = _context.Users.Where(u => u.Login == login).AsTracking();
+                return await query.FirstOrDefaultAsync();
+            }
         }
 
 
-        public async Task<User> GetUserByEmailAsync(string email)
+        public async Task<User> GetUserByEmailAsync(string email, bool withTracking = false)
         {
-            var query = _context.Users.Where(u => u.Email == email);
-            return await query.FirstOrDefaultAsync();
+            if(!withTracking)
+            {
+                var query = _context.Users.Where(u => u.Email == email).AsNoTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                var query = _context.Users.Where(u => u.Email == email).AsTracking();
+                return await query.FirstOrDefaultAsync();
+            }
         }
 
-        public async Task<Message[]> GetAllMessagesAsync()
+        public async Task<Message[]> GetAllMessagesAsync(bool withTracking = false)
         {
-            var query = _context.Messages.Include(m => m.UserFrom).Include(m => m.UserTo);
-
-            return await query.ToArrayAsync();
+            if(!withTracking)
+            {
+                var query = _context.Messages.Include(m => m.UserFrom).Include(m => m.UserTo).AsSplitQuery().AsNoTracking();
+                return await query.ToArrayAsync();
+            }
+            else
+            {
+                var query = _context.Messages.Include(m => m.UserFrom).Include(m => m.UserTo).AsSplitQuery().AsTracking();
+                return await query.ToArrayAsync();
+            }
+            
         }
 
-        public async Task<Message> GetMessageByIdAsync(int id)
+        public async Task<Message> GetMessageByIdAsync(int id, bool withTracking = false)
         {
-            var query = _context.Messages.Where(m => m.Id == id).Include(m => m.UserFrom).Include(m => m.UserTo);
-
-            return await query.FirstOrDefaultAsync();
+            if(!withTracking)
+            {
+                var query = _context.Messages.Where(m => m.Id == id).Include(m => m.UserFrom).Include(m => m.UserTo).AsSplitQuery().AsNoTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                var query = _context.Messages.Where(m => m.Id == id).Include(m => m.UserFrom).Include(m => m.UserTo).AsSplitQuery().AsTracking();
+                return await query.FirstOrDefaultAsync();
+            }
+            
         }
 
-        public async Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2)
+        public async Task<Message[]> GetMessagesByUsersAsync(int userId1, int userId2, bool withTracking = false)
         {
-            var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserToId == userId1 && m.UserFromId == userId2));
-
-            return await query.ToArrayAsync();
+            if(!withTracking)
+            {
+                var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserToId == userId1 && m.UserFromId == userId2)).AsNoTracking();
+                return await query.ToArrayAsync();
+            }
+            else
+            {
+                var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserToId == userId1 && m.UserFromId == userId2)).AsTracking();
+                return await query.ToArrayAsync();
+            }
+            
         }
 
-        public async Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2)
+        public async Task<Message> GetLastMessageBetweenTwoUsersAync(int userId1, int userId2, bool withTracking = false)
         {
-            var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserFromId == userId2 && m.UserToId == userId1))
-            .OrderByDescending(m => m.SendTime);
+            if(!withTracking)
+            {
+                var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserFromId == userId2 && m.UserToId == userId1))
+                .OrderByDescending(m => m.SendTime).AsNoTracking();
 
-            return await query.FirstOrDefaultAsync();
+                return await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                var query = _context.Messages.Where(m => (m.UserFromId == userId1 && m.UserToId == userId2) || (m.UserFromId == userId2 && m.UserToId == userId1))
+                .OrderByDescending(m => m.SendTime).AsTracking();
+
+                return await query.FirstOrDefaultAsync();
+            }
         }
 
-        public async Task<Message[]> GetMessagesByUserAsync(int userId)
+        public async Task<Message[]> GetMessagesByUserAsync(int userId, bool withTracking = false)
         {
-            var query = _context.Messages.Where(m => m.UserFromId == userId || m.UserToId == userId);
-            return await query.ToArrayAsync();
+            if(!withTracking)
+            {
+                var query = _context.Messages.Where(m => m.UserFromId == userId || m.UserToId == userId).AsNoTracking();
+                return await query.ToArrayAsync();
+            }
+            else
+            {
+                var query = _context.Messages.Where(m => m.UserFromId == userId || m.UserToId == userId).AsTracking();
+                return await query.ToArrayAsync();
+            }
         }
 
     }
