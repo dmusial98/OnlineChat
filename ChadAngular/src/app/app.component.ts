@@ -97,6 +97,10 @@ export class AppComponent {
       this.successAlert = false;
     }, 900);
   }
+
+  ngOnDestroy() {
+    clearInterval(this.interval);
+  }
 }
 
 enum ButtonType{

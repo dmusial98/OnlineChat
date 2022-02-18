@@ -75,6 +75,13 @@ export class HttpServiceASPNET implements HttpServiceInterface {
     return this.httpClient.head(`http://localhost:5000/api/users/markMessagesAsRead/` + id);
   }
 
+  sendChaptchaData(captchaResponse: string): Observable<any>{
+    console.log(captchaResponse);
+    return this.httpClient.post(`http://localhost:5000/api/auth/validateCaptcha`, {
+      "captchaResponse": captchaResponse
+    });
+  }
+
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User) {
     this.loginUserData = user;

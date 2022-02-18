@@ -16,6 +16,10 @@ using OnlineChat.Auth;
 using OnlineChat.Models;
 using OnlineChat.Data.Entities;
 using System.Text.RegularExpressions;
+using System.Net;
+using Microsoft.IdentityModel.Protocols;
+using System.IO;
+using System.Text.Json;
 
 namespace WebStore.Controllers
 {
@@ -104,12 +108,12 @@ namespace WebStore.Controllers
                     Regex hasNumberRegex = new Regex(@"[0-9]+");
                     Regex hasUpperCaseRegex = new Regex(@"[A-Z]+");
                     Regex hasMinimum5CharsRegex = new Regex(@".{5,}");
-                    Regex hasSpecialCharacterRegex = new Regex(@"[^\w\d]+");
+                    //Regex hasSpecialCharacterRegex = new Regex(@"[^\w\d]+");
 
                     bool hasNumber = hasNumberRegex.IsMatch(user.Password);
                     bool hasUpperCase = hasUpperCaseRegex.IsMatch(user.Password);
                     bool hasMinimum5CharsPass = hasMinimum5CharsRegex.IsMatch(user.Password);
-                    bool hasSpecialCharacter = hasSpecialCharacterRegex.IsMatch(user.Password);
+                    //bool hasSpecialCharacter = hasSpecialCharacterRegex.IsMatch(user.Password);
                     bool hasMinimum5CharsLogin = hasMinimum5CharsRegex.IsMatch(user.Login);
 
                     StringBuilder ErrorMessageStrBuilder = new StringBuilder();
@@ -121,10 +125,10 @@ namespace WebStore.Controllers
                         ErrorMessageStrBuilder.Append("Password has to contain minimum 1 upper character.\n");
                     if (!hasNumber)
                         ErrorMessageStrBuilder.Append("Password has to contain minimum 1 digit.\n");
-                    if (!hasSpecialCharacter)
-                        ErrorMessageStrBuilder.Append("Password has to contain minimum 1 special character.\n");
+                    //if (!hasSpecialCharacter)
+                    //    ErrorMessageStrBuilder.Append("Password has to contain minimum 1 special character.\n");
 
-                    if (!hasMinimum5CharsLogin || !hasMinimum5CharsPass || !hasUpperCase || !hasSpecialCharacter || !hasNumber)
+                    if (!hasMinimum5CharsLogin || !hasMinimum5CharsPass || !hasUpperCase || /*!hasSpecialCharacter ||*/ !hasNumber)
                         return this.StatusCode(StatusCodes.Status400BadRequest, $"{ErrorMessageStrBuilder}");
 
                     _repository.Add(user);
@@ -142,5 +146,24 @@ namespace WebStore.Controllers
 
             return BadRequest();
         }
-    }
+
+        [HttpPost, Route("validateCaptcha")]
+        public async Task<bool> ValidateCaptcha(CaptchaModel captchaModel)
+        {
+            if (string.IsNullOrEmpty(captchaModel.captchaResponse))
+            {
+                return false;
+            }
+
+            var secret = "6Ld9aIkeAAAAANT7LURQa5HScEI8XT5P3Op1IfaR";
+
+            var client = new System.Net.WebClient();
+
+
+           var googleReply = client.DownloadString(
+                string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, captchaModel.captchaResponse));
+            return JsonSerializer.Deserialize<RecaptchaResponse>(googleReply).success;
+           
+           }
+        }
 }

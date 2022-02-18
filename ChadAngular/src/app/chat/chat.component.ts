@@ -144,12 +144,16 @@ export class ChatComponent {
         data => {
           this.messagesToUser = data;
           this.httpService.getLastMessage(this.selectedUser.id)
-          .subscribe(messsage => {
+          .subscribe(
+            messsage => {
             if(messsage.userFromId == this.selectedUser.id){
               this.httpService.markMessagesAsRead(this.selectedUser.id)
               .subscribe(() => {console.log("markMEssagesAsRead insides" + this.selectedUser.id)});
             }
-          })
+          }, error => {
+            
+          }
+          )
         },
         error => {
           console.log("error in getMessagesWithSelectedUser");

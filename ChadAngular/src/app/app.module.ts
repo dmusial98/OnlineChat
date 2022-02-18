@@ -27,6 +27,9 @@ import { UserViewComponent } from './user-view/user-view.component';
 import { HttpServiceASPNET } from './http.service.aspnet';
 import { JwtModule } from "@auth0/angular-jwt";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { NgHcaptchaComponent, NgHcaptchaModule } from 'ng-hcaptcha';
+import { BotDetectCaptchaModule } from 'angular-captcha';
+import { RecaptchaModule, RECAPTCHA_LANGUAGE } from 'ng-recaptcha';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -62,6 +65,14 @@ export function tokenGetter() {
     MatCardModule,
     MatCheckboxModule,
     MatSnackBarModule,
+    RecaptchaModule,
+
+    BotDetectCaptchaModule,
+  //   NgHcaptchaModule.forRoot({
+  //     siteKey: '6Lc1rIUeAAAAAARwM9oxKRIfDYvvn0-BipN0GS4i',
+  //     languageCode: 'en'
+  // }),
+
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -75,7 +86,11 @@ export function tokenGetter() {
     {
       provide: 'HttpServiceInterface',
       useExisting: HttpServiceASPNET
-    }
+    },
+    {
+      provide:RECAPTCHA_LANGUAGE,
+      useValue: "en",
+    },
   ],
   bootstrap: [AppComponent]
 })

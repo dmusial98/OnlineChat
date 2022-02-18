@@ -7,6 +7,10 @@ import { JwtHelperService } from "@auth0/angular-jwt";
 import { AuthGuard } from '../guards/auth-guard.service';
 import { filter, switchMapTo, tap } from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar'; 
+import { BotDetectCaptchaModule, CaptchaComponent } from 'angular-captcha';
+import { RecaptchaErrorParameters } from "ng-recaptcha";
+import { resetFakeAsyncZone } from '@angular/core/testing';
+import { RecaptchaModule} from 'ng-recaptcha';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +18,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+  captcha: RecaptchaModule;
   hidden = false;
   unreadMessages = 0;
   checkboxChecked = false;
@@ -23,12 +28,12 @@ export class LoginComponent {
   registerFormSubmitted = false;
   loginFormSubmitted = false;
   successAlert = false;
+  isCaptchaCorrect = false;
 
   registerForm = new FormBuilder().group({
     user_name: new FormControl("", [
       Validators.required,
-      Validators.minLength(3),
-      Validators.pattern("^[a-zA-Z0-9]+$")
+      Validators.minLength(5),
     ]),
     user_email: new FormControl("", [
       Validators.required,
@@ -36,19 +41,19 @@ export class LoginComponent {
     ]),
     user_password: new FormControl("", [
       Validators.required,
-      Validators.minLength(3),
+      Validators.minLength(5),
+      Validators.pattern("[A-Z0-9a-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)]+$"),
     ]),
   });
 
   loginForm = new FormBuilder().group({
     user_name: new FormControl("", [
       Validators.required,
-      Validators.minLength(3),
-      Validators.pattern("^[a-zA-Z0-9]+$")
+      Validators.minLength(5),
     ]),
     user_password: new FormControl("", [
       Validators.required,
-      Validators.minLength(3),
+      Validators.minLength(5),
     ]),
   });
 
@@ -62,8 +67,11 @@ export class LoginComponent {
     private router: Router,
     @Inject('HttpServiceInterface') private httpService: HttpServiceInterface,
     private authGuard: AuthGuard,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+    
+  ) { 
+    //this.captchaComponent.captchaEndpoint = "http://localhost:5000/api/auth/validateCaptcha";
+  }
 
   onRegisterSubmit() {
     this.registerFormSubmitted = true;
@@ -71,20 +79,37 @@ export class LoginComponent {
       const formValue = this.registerForm.value
       console.log(formValue);
       this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
-      .pipe(tap(response => {
-        if (response.register == false) {
+      .subscribe(
+        response => {
+          this.httpService.login(formValue.user_name, formValue.user_password)
+        .subscribe(response => {
+          const token = (<any>response).accessToken;
+          const refreshToken = (<any>response).refreshToken;
+          localStorage.setItem("jwt", token);
+          localStorage.setItem("refreshToken", refreshToken);
+          this.httpService.changedLoginState(true);
+          this.httpService.loginUserData = new User(this.authGuard.getIdFromJWT(), formValue.user_name, true);
+          this.router.navigateByUrl("/chat")
+        }, err => {
+          this.openSnackBar("Unsuccessful login");
+          this.httpService.changedLoginState(false);
+        })
+        },
+        error => {
           this.openSnackBar("Register not complete");
-         }
-      }),
-        filter(response => response.register),
-        switchMapTo(this.httpService.login(formValue.user_name, formValue.user_password)))
-        .subscribe( response => {
-          if (response.loggedin == true) {
-            this.httpService.changedLoginState(response.loggedin);
-            this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
-            this.router.navigateByUrl("/chat")
         }
-      })
+      )
+        //filter(response => response.register),
+        // switchMapTo(this.httpService.login(formValue.user_name, formValue.user_password)))
+        // .subscribe( response => {
+        //   console.log("jest response znowu")
+        //   if (response.loggedin == true) {
+        //     console.log("zalogowany")
+        //     this.httpService.changedLoginState(response.loggedin);
+        //     this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
+        //     this.router.navigateByUrl("/chat")
+        // }
+     //})
     }
   }
 
@@ -143,9 +168,7 @@ export class LoginComponent {
       if (this.registerForm.controls['user_name'].hasError('required')) {
         placeholder = "Username is required";
       } else if (this.registerForm.controls['user_name'].hasError('minlength')) {
-        placeholder = "Username is to short (min 3 characters)";
-      } else if (this.registerForm.controls['user_name'].hasError('pattern')) {
-        placeholder = "Username should only consist of letters or digits";
+        placeholder = "Username is to short (min 5 characters)";
       }
     }
     return placeholder;
@@ -169,7 +192,9 @@ export class LoginComponent {
       if (this.registerForm.controls['user_password'].hasError('required')) {
         placeholder = "Password is required";
       } else if (this.registerForm.controls['user_password'].hasError('minlength')) {
-        placeholder = "Password is too short (min 3 characters)";
+        placeholder = "Password is too short (min 5 characters)";
+      } else if (this.registerForm.controls['user_password'].hasError('pattern')) {
+        placeholder = "At least one digit, lowercase and uppercase";
       }
     }
     return placeholder;
@@ -182,9 +207,7 @@ export class LoginComponent {
       if (this.loginForm.controls['user_name'].hasError('required')) {
         placeholder = "Username is required";
       } else if (this.loginForm.controls['user_name'].hasError('minlength')) {
-        placeholder = "Username is to short (min 3 characters)";
-      } else if (this.loginForm.controls['user_name'].hasError('pattern')) {
-        placeholder = "Username should only consist of letters or digits";
+        placeholder = "Username is to short (min 5 characters)";
       }
     }
     return placeholder;
@@ -208,14 +231,35 @@ export class LoginComponent {
       if (this.loginForm.controls['user_password'].hasError('required')) {
         placeholder = "Password is required";
       } else if (this.loginForm.controls['user_password'].hasError('minlength')) {
-        placeholder = "Password is too short (min 3 characters)";
+        placeholder = "Password is too short (min 5 characters)";
       }
     }
     return placeholder;
   }
+
+resolved(captchaResponse: string): void {
+  this.httpService.sendChaptchaData(captchaResponse)
+    .subscribe(
+      response => {
+        console.log("cos sie dzieje");
+        console.log(response);
+        if (response == true) {
+          console.log("mamy sukces");
+            this.isCaptchaCorrect = true;
+        }
+      },
+      error => {
+        console.log("mamy blad");
+        this.isCaptchaCorrect = false;
+        throw new Error(error);
+      });
 }
 
 
+onError(errorDetails: RecaptchaErrorParameters): void {
+  console.log(`reCAPTCHA error encountered; details:`, errorDetails);
+}
+}
 enum ButtonType {
   none,
   home,

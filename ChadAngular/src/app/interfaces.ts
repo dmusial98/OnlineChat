@@ -28,6 +28,8 @@ export interface HttpServiceInterface {
 
   markMessagesAsRead(id: number): Observable<any>;
 
+  sendChaptchaData(captchaResponse: String): Observable<any>;
+
   // Setter ustawiający wartość w polu loginUserData
   set user(user: User);
 }

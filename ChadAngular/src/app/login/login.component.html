@@ -1,5 +1,5 @@
 <div class="container flex-center">
-  <div class="d-flex align-items-left content-height w-100" role="navigation">
+  <div class="d-flex align-items-left content-height w-150" role="navigation">
     <mat-tab-group mat-streach-tabs class="example-streched-tabs white-text" backgroundColor="warn" >
       <mat-tab label="Sign Up">
         <mat-card-content>
@@ -37,9 +37,12 @@
                         I have read and agree to the terms
                       </label>
                     </div>
+                    <re-captcha (resolved)="resolved($event)" (error)="onError($event)" errorMode="handled" siteKey="6Ld9aIkeAAAAAA3hT9DJ-m6KUcSSq0T8tePc7nxN"></re-captcha>
+                        <!--  <div *ngIf="captchaError" class="error">Recaptcha not verified.</div>
+                   <ng-hcaptcha siteKey="6Lc1rIUeAAAAAARwM9oxKRIfDYvvn0-BipN0GS4i" (verify)="checkCaptcha($event)"></ng-hcaptcha>  -->
                   </div>
                   <div class="text-center mt-4 credentials-button-div">
-                    <button class="element-center" mdbBtn color="info" mdbWavesEffect type="submit" [disabled]="!checkboxChecked">
+                    <button class="element-center" mdbBtn color="info" mdbWavesEffect type="submit" [disabled]="!checkboxChecked || !isCaptchaCorrect">
                       <div class="font-color">
                         Sign up
                       </div>
@@ -76,9 +79,10 @@
                       <input type="password" id="form2" class="text-white form-control" mdbInput formControlName="user_password">
                       <label for="form2" [style]="{'color': loginFormSubmitted && loginForm.controls['user_password'].errors ? 'red' : 'white'}">{{placeholderForLoginPassword()}}</label>
                     </div>
+                    <re-captcha (resolved)="resolved($event)" (error)="onError($event)" errorMode="handled" siteKey="6Ld9aIkeAAAAAA3hT9DJ-m6KUcSSq0T8tePc7nxN" ></re-captcha>
                   </div>
-                  <div class="text-center mt-4 credentials-button-div">
-                    <button class="element-center" mdbBtn color="info" mdbWavesEffect type="submit">
+                   <div class="text-center mt-4 credentials-button-div">
+                    <button class="element-center" mdbBtn color="info" mdbWavesEffect type="submit" [disabled]="!isCaptchaCorrect">
                       <div class="font-color">
                         Sign in
                       </div>

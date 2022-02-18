@@ -28,6 +28,8 @@
     "animate.css": "^3.7.2",
     "chart.js": "^2.5.0",
     "hammerjs": "^2.0.8",
+    "ng-hcaptcha": "^1.2.0",
+    "ng-recaptcha": "^9.0.0",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
