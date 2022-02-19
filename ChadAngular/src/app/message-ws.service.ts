@@ -39,13 +39,11 @@ export class MessageWSService {
     this.ws.onopen = function () {
       self.isOpen = true;
       self.onOpen.emit(true);
-      console.log('WebSocket connection established');
     };
 
     this.ws.onclose = function () {
       self.onClose.emit(true);
       self.isOpen = false;
-      console.log('WebSocket connection closed');
     };
 
     this.ws.onmessage = function (msg) {
@@ -56,8 +54,6 @@ export class MessageWSService {
       if (mes["status"] == 2) {
         self.onAnotherUserConneted.emit(true);
       }
-
-      console.log('WebSocket message', msg.data);
     };
   }
 }

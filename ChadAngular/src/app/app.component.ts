@@ -65,7 +65,6 @@ export class AppComponent {
   checkForUnreadMessages(){
       this.httpService.getUnreadMessagesNumber()
       .subscribe((number) => {
-        //console.log("number of unread: " + number)
         this.setUnreadMessageNumber(number);
       })
     

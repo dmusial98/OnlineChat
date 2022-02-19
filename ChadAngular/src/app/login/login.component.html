@@ -37,7 +37,7 @@
                         I have read and agree to the terms
                       </label>
                     </div>
-                    <re-captcha (resolved)="resolved($event)" (error)="onError($event)" errorMode="handled" siteKey="6Ld9aIkeAAAAAA3hT9DJ-m6KUcSSq0T8tePc7nxN"></re-captcha>
+                    <re-captcha (resolved)="resolved($event)" (error)="onError($event)" errorMode="handled" siteKey="6LcYCooeAAAAAOuX49h2OHUIAE5U0ZAtu-_Kvv8i"></re-captcha>
                         <!--  <div *ngIf="captchaError" class="error">Recaptcha not verified.</div>
                    <ng-hcaptcha siteKey="6Lc1rIUeAAAAAARwM9oxKRIfDYvvn0-BipN0GS4i" (verify)="checkCaptcha($event)"></ng-hcaptcha>  -->
                   </div>
@@ -79,7 +79,7 @@
                       <input type="password" id="form2" class="text-white form-control" mdbInput formControlName="user_password">
                       <label for="form2" [style]="{'color': loginFormSubmitted && loginForm.controls['user_password'].errors ? 'red' : 'white'}">{{placeholderForLoginPassword()}}</label>
                     </div>
-                    <re-captcha (resolved)="resolved($event)" (error)="onError($event)" errorMode="handled" siteKey="6Ld9aIkeAAAAAA3hT9DJ-m6KUcSSq0T8tePc7nxN" ></re-captcha>
+                    <re-captcha (resolved)="resolved($event)" (error)="onError($event)" errorMode="handled" siteKey="6LcYCooeAAAAAOuX49h2OHUIAE5U0ZAtu-_Kvv8i" ></re-captcha>
                   </div>
                    <div class="text-center mt-4 credentials-button-div">
                     <button class="element-center" mdbBtn color="info" mdbWavesEffect type="submit" [disabled]="!isCaptchaCorrect">

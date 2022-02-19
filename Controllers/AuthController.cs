@@ -104,13 +104,14 @@ namespace WebStore.Controllers
                 {
                     Regex hasNumberRegex = new Regex(@"[0-9]+");
                     Regex hasUpperCaseRegex = new Regex(@"[A-Z]+");
+                    Regex hasLowerCaseRegex = new Regex(@"[a-z]+");
                     Regex hasMinimum5CharsRegex = new Regex(@".{5,}");
                     //Regex hasSpecialCharacterRegex = new Regex(@"[^\w\d]+");
 
                     bool hasNumber = hasNumberRegex.IsMatch(user.Password);
                     bool hasUpperCase = hasUpperCaseRegex.IsMatch(user.Password);
                     bool hasMinimum5CharsPass = hasMinimum5CharsRegex.IsMatch(user.Password);
-                    //bool hasSpecialCharacter = hasSpecialCharacterRegex.IsMatch(user.Password);
+                    bool hasLowercase = hasLowerCaseRegex.IsMatch(user.Password);
                     bool hasMinimum5CharsLogin = hasMinimum5CharsRegex.IsMatch(user.Login);
 
                     StringBuilder ErrorMessageStrBuilder = new StringBuilder();
@@ -122,10 +123,10 @@ namespace WebStore.Controllers
                         ErrorMessageStrBuilder.Append("Password has to contain minimum 1 upper character.\n");
                     if (!hasNumber)
                         ErrorMessageStrBuilder.Append("Password has to contain minimum 1 digit.\n");
-                    //if (!hasSpecialCharacter)
-                    //    ErrorMessageStrBuilder.Append("Password has to contain minimum 1 special character.\n");
+                    if (!hasLowercase)
+                        ErrorMessageStrBuilder.Append("Password has to contain minimu 1 lower character.\n");
 
-                    if (!hasMinimum5CharsLogin || !hasMinimum5CharsPass || !hasUpperCase || /*!hasSpecialCharacter ||*/ !hasNumber)
+                    if (!hasMinimum5CharsLogin || !hasMinimum5CharsPass || !hasUpperCase || !hasLowercase || !hasNumber)
                         return this.StatusCode(StatusCodes.Status400BadRequest, $"{ErrorMessageStrBuilder}");
 
                     _repository.Add(user);
@@ -152,7 +153,7 @@ namespace WebStore.Controllers
                 return false;
             }
 
-            var secret = "6Ld9aIkeAAAAANT7LURQa5HScEI8XT5P3Op1IfaR";
+            var secret = "6LcYCooeAAAAALdb-kSxryDAGTjGAYTNrLsob53T";
 
             var client = new System.Net.WebClient();
 

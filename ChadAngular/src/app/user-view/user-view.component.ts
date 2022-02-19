@@ -29,7 +29,6 @@ export class UserViewComponent implements OnInit {
       _message => {
         this.message = _message;
       }, err => {
-        console.log('lack of last message ;(');
     })
   }
 

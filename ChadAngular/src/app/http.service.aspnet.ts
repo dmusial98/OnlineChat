@@ -29,9 +29,6 @@ export class HttpServiceASPNET implements HttpServiceInterface {
       "login": user_name,
       "password": user_password
     });
-
-    console.log(response);
-
     return response;
   }
 
@@ -73,8 +70,7 @@ export class HttpServiceASPNET implements HttpServiceInterface {
   }
 
   sendChaptchaData(captchaResponse: string): Observable<any>{
-    console.log(captchaResponse);
-    return this.httpClient.post(`http://localhost:5000/api/auth/validateCaptcha`, {
+    return this.httpClient.post(`${this.apiUrl}/auth/validateCaptcha`, {
       "captchaResponse": captchaResponse
     });
   }

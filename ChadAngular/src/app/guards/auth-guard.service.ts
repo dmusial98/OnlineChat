@@ -12,7 +12,6 @@ export class AuthGuard implements CanActivate {
   async canActivate() {
     const token = localStorage.getItem("jwt");
     if (token && !this.jwtHelper.isTokenExpired(token)) {
-      console.log(this.jwtHelper.decodeToken(token));
       return true;
     }
     const isRefreshSuccess = await this.tryRefreshingTokens(token);
@@ -29,7 +28,6 @@ export class AuthGuard implements CanActivate {
       return false;
     }
     const credentials = JSON.stringify({ accessToken: token, refreshToken: refreshToken });
-    console.log(credentials);
     let isRefreshSuccess: boolean;
     try {
       const response = await this.http.post("https://onlinechat.azurewebsites.net/api/token/refresh", credentials, {
@@ -41,8 +39,6 @@ export class AuthGuard implements CanActivate {
       // If token refresh is successful, set new tokens in local storage.
       const newToken = (<any>response).body.accessToken;
       const newRefreshToken = (<any>response).body.refreshToken;
-      console.log(newToken);
-      console.log(newRefreshToken);
       localStorage.setItem("jwt", newToken);
       localStorage.setItem("refreshToken", newRefreshToken);
       isRefreshSuccess = true;

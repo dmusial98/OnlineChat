@@ -42,7 +42,7 @@ export class LoginComponent {
     user_password: new FormControl("", [
       Validators.required,
       Validators.minLength(5),
-      Validators.pattern("[A-Z0-9a-z\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)]+$"),
+      Validators.pattern("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{5,}$"),
     ]),
   });
 
@@ -77,7 +77,6 @@ export class LoginComponent {
     this.registerFormSubmitted = true;
     if (this.registerForm.valid) {
       const formValue = this.registerForm.value
-      //console.log(formValue);
       this.httpService.register(formValue.user_name, formValue.user_email, formValue.user_password)
       .subscribe(
         response => {
@@ -99,17 +98,6 @@ export class LoginComponent {
           this.openSnackBar("Register not complete");
         }
       )
-        //filter(response => response.register),
-        // switchMapTo(this.httpService.login(formValue.user_name, formValue.user_password)))
-        // .subscribe( response => {
-        //   console.log("jest response znowu")
-        //   if (response.loggedin == true) {
-        //     console.log("zalogowany")
-        //     this.httpService.changedLoginState(response.loggedin);
-        //     this.httpService.loginUserData = new User(response.user_id, response.user_name, response.loggedin);
-        //     this.router.navigateByUrl("/chat")
-        // }
-     //})
     }
   }
 
@@ -241,15 +229,11 @@ resolved(captchaResponse: string): void {
   this.httpService.sendChaptchaData(captchaResponse)
     .subscribe(
       response => {
-        console.log("cos sie dzieje");
-        console.log(response);
         if (response == true) {
-          console.log("mamy sukces");
             this.isCaptchaCorrect = true;
         }
       },
       error => {
-        console.log("mamy blad");
         this.isCaptchaCorrect = false;
         throw new Error(error);
       });
@@ -257,7 +241,7 @@ resolved(captchaResponse: string): void {
 
 
 onError(errorDetails: RecaptchaErrorParameters): void {
-  console.log(`reCAPTCHA error encountered; details:`, errorDetails);
+/*  console.log(`reCAPTCHA error encountered; details:`, errorDetails);*/
 }
 }
 enum ButtonType {
